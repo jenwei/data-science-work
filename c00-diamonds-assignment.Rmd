@@ -123,6 +123,8 @@ diamonds %>%
 - The density of data seems to show an almost exponential relationship between `price` and `carat` (between 0 and 2.5)
 - `Fair` cuts tend to be the cheaper option for a given `carat`
 - There are no `Ideal` cuts for diamonds greater than ~3.5 carats in this dataset
+<!-- TODO: [2020-07-10] Add titles to graphs and figure names (if possible) -->
+<!-- TODO: [2020-07-10] Add references to graphs in observations -->
 
 # Communication
 <!-- -------------------------------------------------- -->
