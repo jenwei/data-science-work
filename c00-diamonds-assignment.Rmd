@@ -1,7 +1,7 @@
 ---
 title: "Getting Started: Diamonds"
-author: "(Your name here)"
-date: 2020-
+author: "Jen Wei"
+date: 2020-07-09
 output:
   github_document:
     toc: true
@@ -56,23 +56,73 @@ __q1__ Create a plot of `price` vs `carat` of the `diamonds` dataset below. Docu
 
 ```{r q1-task}
 ## TASK: Plot `price` vs `carat` below
-## Your code here!
+diamonds %>%
+  ggplot(aes(y = price, x = carat)) +
+  geom_point() +
+  ggtitle('`price` vs `carat`')
 ```
 
 **Observations**:
 
-- (Write your observations here!)
+- `price` and `carat` have a positive relationship where `price` generally increases as `carat` increases
+- The relationship isn't strong as there are multiple curves/concentrated areas
+- Whole-valued carats have a greater concentration of data points
+- There is quite a bit of variance in pricing for diamonds around the same `carat` (weight) - likely due to other factors that impact pricing
 
 __q2__ Create a visualization showing variables `carat`, `price`, and `cut` simultaneously. Experiment with which variable you assign to which aesthetic (`x`, `y`, etc.) to find an effective visual.
 
 ```{r q2-task}
 ## TASK: Plot `price`, `carat`, and `cut` below
-## Your code here!
+diamonds %>%
+  ggplot(aes(y = price, x = carat, color = cut)) +
+  geom_point() +
+  ggtitle('`price` vs `carat` by `cut`')
+
+diamonds %>%
+  ggplot(aes(y = price, x = cut, color = carat)) +
+  scale_colour_gradientn(colours=rainbow(4)) +
+  geom_point(alpha = 1/10) +
+  ggtitle('`price` vs `cut` by `carat`')
+
+diamonds %>%
+  ggplot() +
+  geom_boxplot(aes(y = price, x = cut)) +
+  ggtitle('`price` vs `cut`')
+
+diamonds %>%
+  ggplot(aes(carat)) +
+  geom_histogram()
+
+# TODO: [2020-07-10] Combine the two carat bar charts into one
+diamonds %>%
+  mutate(roundedCarat = round(carat)) %>%
+  ggplot(aes(roundedCarat)) +
+  geom_bar()
+
+diamonds %>%
+  ggplot(aes(carat)) +
+  geom_bar()
+
+diamonds %>%
+  ggplot(aes(y = price, x = carat)) +
+  geom_point() +
+  facet_wrap(~cut)
+
+## TODO: [2020-07-09] Figure out how to make carat (continuous) discrete
+## diamonds %>%
+##  mutate(roundedCarat = round(carat)) %>%
+##  ggplot() +
+##  geom_boxplot(aes(group = cut(roundedCarat(carat,))
+##  geom_boxplot(aes(y = price, x = roundedCarat)) +
+##  ggtitle('`price` vs `carat`')
 ```
 
 **Observations**:
-
-- (Write your observations here!)
+- There is an overall positive relationship between `price` and the other two variables (`carat` and `cut`)
+- There is an overall negative relationship between `carat` and `cut` where the density of `Premium` and `Ideal` cuts are in the lower carats
+- The density of data seems to show an almost exponential relationship between `price` and `carat` (between 0 and 2.5)
+- `Fair` cuts tend to be the cheaper option for a given `carat`
+- There are no `Ideal` cuts for diamonds greater than ~3.5 carats in this dataset
 
 # Communication
 <!-- -------------------------------------------------- -->
