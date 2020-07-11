@@ -1,7 +1,7 @@
 ---
 title: "Getting Started: Diamonds"
-author: "(Your name here)"
-date: 2020-
+author: "Jen Wei"
+date: 2020-07-09
 output:
   github_document:
     toc: true
@@ -56,23 +56,93 @@ __q1__ Create a plot of `price` vs `carat` of the `diamonds` dataset below. Docu
 
 ```{r q1-task}
 ## TASK: Plot `price` vs `carat` below
-## Your code here!
+diamonds %>%
+  ggplot(aes(y = price, x = carat)) +
+  geom_point() +
+  ggtitle('`price` vs `carat`')
 ```
 
 **Observations**:
 
-- (Write your observations here!)
+- `price` and `carat` have a positive relationship where `price` generally increases as `carat` increases
+- The relationship isn't strong as there are multiple curves/concentrated areas
+- Whole-valued carats have a greater concentration of data points
+- There is quite a bit of variance in pricing for diamonds around the same `carat` (weight) - likely due to other factors that impact pricing
 
 __q2__ Create a visualization showing variables `carat`, `price`, and `cut` simultaneously. Experiment with which variable you assign to which aesthetic (`x`, `y`, etc.) to find an effective visual.
 
-```{r q2-task}
+```{r q2-task-plot-1}
 ## TASK: Plot `price`, `carat`, and `cut` below
-## Your code here!
+diamonds %>%
+  ggplot(aes(y = price, x = carat, color = cut)) +
+  geom_point() +
+  ggtitle('`price` vs `carat` (colored by `cut`) of diamonds')
+```
+
+```{r q2-task-plot-2}
+diamonds %>%
+  ggplot(aes(y = price, x = cut, color = carat)) +
+  scale_colour_gradientn(colours = rainbow(4)) +
+  geom_point(alpha = 1/10) +
+  ggtitle('`price` vs `cut` (colored by `carat`) of diamonds')
+```
+
+```{r q2-task-plot-3}
+diamonds %>%
+  ggplot(aes(y = price, x = carat)) +
+  geom_point() +
+  facet_wrap(~cut) +
+  ggtitle('`price`  vs `carat` of diamonds separated by `cut`')
+```
+
+```{r q2-task-plot-4}
+diamonds %>%
+  ggplot(aes(y = price, x = carat)) +
+  geom_point() +
+  scale_x_log10() +
+  scale_y_log10() +
+  facet_wrap(~cut) +
+  ggtitle('`price`  vs `carat` of diamonds separated by `cut` on log-log scale')
 ```
 
 **Observations**:
 
-- (Write your observations here!)
+From plot 1
+- There is an overall positive relationship between `price` and the other two variables (`carat` and `cut`)
+- There is an overall negative relationship between `carat` and `cut` where the density of `Premium` and `Ideal` cuts are in the lower carats
+- The density of data seems to show an almost exponential relationship between `price` and `carat` (between 0 and 2.5)
+- `Fair` cuts appears to be (but is not necessarily) the cheaper option for a given `carat` as shown in other plots in this question
+- There are no `Ideal` cuts for diamonds greater than ~3.5 carats in this dataset
+
+From plot 2
+- There is an overall positive relationship between `price` and `carat` that is consistent across all cuts
+
+From plot 3
+- The relationship between `price` and `carat` seems consistent across cuts though there's more variance with `Fair` cuts - makes me wonder what/how the data was collected for this set and why that's the case
+
+From plot 4
+- On a log-log scale, the relationship between `price` and `carat` across cuts seems consistent and relatively linear. My math/stats memory is hazy though, so I'm not sure what to extract from that observation at the moment
+
+## Extra Plots
+The below plots were not requirements for either of the questions in this assignment but were helpful to better understand the data and make sense of other plots.
+
+```{r extra plots}
+diamonds %>%
+  ggplot() +
+  geom_boxplot(aes(y = price, x = cut)) +
+  ggtitle('`price` vs `cut` of diamonds')
+
+diamonds %>%
+  ggplot(aes(carat)) +
+  geom_histogram() +
+  ggtitle('Distribution of diamonds by `carat`')
+
+diamonds %>%
+  mutate(roundedCarat = round(x = carat, digits = 1)) %>%
+  ggplot(aes(roundedCarat)) +
+  geom_histogram(fill = 'blue') +
+  ggtitle('Distribution of diamonds by `carat` rounded by one decimal place')
+```
 
 # Communication
 <!-- -------------------------------------------------- -->
