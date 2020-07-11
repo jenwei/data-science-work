@@ -71,60 +71,78 @@ diamonds %>%
 
 __q2__ Create a visualization showing variables `carat`, `price`, and `cut` simultaneously. Experiment with which variable you assign to which aesthetic (`x`, `y`, etc.) to find an effective visual.
 
-```{r q2-task}
+```{r q2-task-plot-1}
 ## TASK: Plot `price`, `carat`, and `cut` below
 diamonds %>%
   ggplot(aes(y = price, x = carat, color = cut)) +
   geom_point() +
-  ggtitle('`price` vs `carat` by `cut`')
+  ggtitle('`price` vs `carat` (colored by `cut`) of diamonds')
+```
 
+```{r q2-task-plot-2}
 diamonds %>%
   ggplot(aes(y = price, x = cut, color = carat)) +
-  scale_colour_gradientn(colours=rainbow(4)) +
+  scale_colour_gradientn(colours = rainbow(4)) +
   geom_point(alpha = 1/10) +
-  ggtitle('`price` vs `cut` by `carat`')
+  ggtitle('`price` vs `cut` (colored by `carat`) of diamonds')
+```
 
-diamonds %>%
-  ggplot() +
-  geom_boxplot(aes(y = price, x = cut)) +
-  ggtitle('`price` vs `cut`')
-
-diamonds %>%
-  ggplot(aes(carat)) +
-  geom_histogram()
-
-# TODO: [2020-07-10] Combine the two carat bar charts into one
-diamonds %>%
-  mutate(roundedCarat = round(carat)) %>%
-  ggplot(aes(roundedCarat)) +
-  geom_bar()
-
-diamonds %>%
-  ggplot(aes(carat)) +
-  geom_bar()
-
+```{r q2-task-plot-3}
 diamonds %>%
   ggplot(aes(y = price, x = carat)) +
   geom_point() +
-  facet_wrap(~cut)
+  facet_wrap(~cut) +
+  ggtitle('`price`  vs `carat` of diamonds separated by `cut`')
+```
 
-## TODO: [2020-07-09] Figure out how to make carat (continuous) discrete
-## diamonds %>%
-##  mutate(roundedCarat = round(carat)) %>%
-##  ggplot() +
-##  geom_boxplot(aes(group = cut(roundedCarat(carat,))
-##  geom_boxplot(aes(y = price, x = roundedCarat)) +
-##  ggtitle('`price` vs `carat`')
+```{r q2-task-plot-4}
+diamonds %>%
+  ggplot(aes(y = price, x = carat)) +
+  geom_point() +
+  scale_x_log10() +
+  scale_y_log10() +
+  facet_wrap(~cut) +
+  ggtitle('`price`  vs `carat` of diamonds separated by `cut` on log-log scale')
 ```
 
 **Observations**:
+
+From plot 1
 - There is an overall positive relationship between `price` and the other two variables (`carat` and `cut`)
 - There is an overall negative relationship between `carat` and `cut` where the density of `Premium` and `Ideal` cuts are in the lower carats
 - The density of data seems to show an almost exponential relationship between `price` and `carat` (between 0 and 2.5)
-- `Fair` cuts tend to be the cheaper option for a given `carat`
+- `Fair` cuts appears to be (but is not necessarily) the cheaper option for a given `carat` as shown in other plots in this question
 - There are no `Ideal` cuts for diamonds greater than ~3.5 carats in this dataset
-<!-- TODO: [2020-07-10] Add titles to graphs and figure names (if possible) -->
-<!-- TODO: [2020-07-10] Add references to graphs in observations -->
+
+From plot 2
+- There is an overall positive relationship between `price` and `carat` that is consistent across all cuts
+
+From plot 3
+- The relationship between `price` and `carat` seems consistent across cuts though there's more variance with `Fair` cuts - makes me wonder what/how the data was collected for this set and why that's the case
+
+From plot 4
+- On a log-log scale, the relationship between `price` and `carat` across cuts seems consistent and relatively linear. My math/stats memory is hazy though, so I'm not sure what to extract from that observation at the moment
+
+## Extra Plots
+The below plots were not requirements for either of the questions in this assignment but were helpful to better understand the data and make sense of other plots.
+
+```{r extra plots}
+diamonds %>%
+  ggplot() +
+  geom_boxplot(aes(y = price, x = cut)) +
+  ggtitle('`price` vs `cut` of diamonds')
+
+diamonds %>%
+  ggplot(aes(carat)) +
+  geom_histogram() +
+  ggtitle('Distribution of diamonds by `carat`')
+
+diamonds %>%
+  mutate(roundedCarat = round(x = carat, digits = 1)) %>%
+  ggplot(aes(roundedCarat)) +
+  geom_histogram(fill = 'blue') +
+  ggtitle('Distribution of diamonds by `carat` rounded by one decimal place')
+```
 
 # Communication
 <!-- -------------------------------------------------- -->
