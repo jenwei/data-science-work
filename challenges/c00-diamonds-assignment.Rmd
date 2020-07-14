@@ -79,6 +79,14 @@ diamonds %>%
   labs(title = '`price` vs `carat` (colored by `cut`) of diamonds')
 ```
 
+**Observations**:
+
+- There is an overall positive relationship between `price` and the other two variables (`carat` and `cut`)
+- There is an overall negative relationship between `carat` and `cut` where the density of `Premium` and `Ideal` cuts are in the lower (< ~ 2.5) carats
+- The density of data seems to show an almost exponential relationship between `price` and `carat` (between 0 and 2.5)
+- `Fair` cuts appear to be the cheaper options for a given `carat` though the emphasis here should be _appear_ since there's a fair bit of variance in prices for `Fair` cuts
+- There are no `Ideal` cuts for diamonds greater than ~3.5 carats in this dataset
+
 ```{r q2-task-plot-2}
 diamonds %>%
   ggplot(aes(y = price, x = cut, color = carat)) +
@@ -87,6 +95,10 @@ diamonds %>%
   labs(title = '`price` vs `cut` (colored by `carat`) of diamonds')
 ```
 
+**Observations**:
+
+- There is an overall positive relationship between `price` and `carat` that is consistent across all cuts
+
 ```{r q2-task-plot-3}
 diamonds %>%
   ggplot(aes(y = price, x = carat)) +
@@ -94,6 +106,10 @@ diamonds %>%
   facet_wrap(~cut) +
   labs(title = '`price` vs `carat` of diamonds separated by `cut`')
 ```
+
+**Observations**:
+
+- The relationship between `price` and `carat` seems consistent across cuts though there's more variance with `Fair` cuts - makes me wonder what/how the data was collected for this set and why that's the case
 
 ```{r q2-task-plot-4}
 diamonds %>%
@@ -107,21 +123,7 @@ diamonds %>%
 
 **Observations**:
 
-From plot 1
-- There is an overall positive relationship between `price` and the other two variables (`carat` and `cut`)
-- There is an overall negative relationship between `carat` and `cut` where the density of `Premium` and `Ideal` cuts are in the lower carats
-- The density of data seems to show an almost exponential relationship between `price` and `carat` (between 0 and 2.5)
-- `Fair` cuts appears to be (but is not necessarily) the cheaper option for a given `carat` as shown in other plots in this question
-- There are no `Ideal` cuts for diamonds greater than ~3.5 carats in this dataset
-
-From plot 2
-- There is an overall positive relationship between `price` and `carat` that is consistent across all cuts
-
-From plot 3
-- The relationship between `price` and `carat` seems consistent across cuts though there's more variance with `Fair` cuts - makes me wonder what/how the data was collected for this set and why that's the case
-
-From plot 4
-- On a log-log scale, the relationship between `price` and `carat` across cuts seems consistent and relatively linear. My math/stats memory is hazy though, so I'm not sure what to extract from that observation at the moment
+- On a log-log scale, the relationship between `price` and `carat` across cuts seems consistent and relatively linear - my math/stats memory is hazy though, so I'm not sure what to extract from that observation at the moment
 
 ## Extra Plots
 The below plots were not requirements for either of the questions in this assignment but were helpful to better understand the data and make sense of other plots.
