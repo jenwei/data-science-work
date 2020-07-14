@@ -97,6 +97,7 @@ df_titanic_survived %>%
   geom_col(mapping = aes(x = Class, y = n, fill = Sex), position = "dodge") + facet_wrap( ~ Age) +
   ggtitle("Survival Count by Class (split by Sex and Age)")
 ```
+
 **Observations**:
 
 - There were no children in the crew (which makes sense)
@@ -121,6 +122,7 @@ df_titanic_deceased %>%
   geom_col(mapping = aes(x = Class, y = n, fill = Sex), position = "dodge") + facet_wrap( ~ Age) +
   ggtitle("Deceased Count by Class (split by Sex and Age)")
 ```
+
 **Observations**:
 - The children who did not survive were all in third class
 - People in `1st` had the lowest deceased count among the four classes
