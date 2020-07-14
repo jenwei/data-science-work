@@ -91,12 +91,12 @@ df_titanic_survived
 df_titanic_survived %>%
   ggplot() +
   geom_col(mapping = aes(x = Class, y = n, fill = Sex), position = "dodge") +
-  ggtitle("Survival Count by Class split by Sex")
+  labs(title = "Survival Count by Class split by Sex")
 
 df_titanic_survived %>%
   ggplot() +
-  geom_col(mapping = aes(x = Class, y = n, fill = Sex), position = "dodge") + facet_wrap( ~ Age) +
-  ggtitle("Survival Count by Class (split by Sex and Age)")
+  geom_col(mapping = aes(x = Class, y = n, fill = Sex), position = "dodge") + facet_wrap(~ Age) +
+  labs(title = "Survival Count by Class (split by Sex and Age)")
 ```
 
 **Observations**:
@@ -116,12 +116,12 @@ df_titanic_deceased <- filter(df_titanic, Survived == "No")
 df_titanic_deceased %>%
   ggplot() +
   geom_col(mapping = aes(x = Class, y = n, fill = Sex), position = "dodge") +
-  ggtitle("Deceased Count by Class split by Sex")
+  labs(title = "Deceased Count by Class split by Sex")
 
 df_titanic_deceased %>%
   ggplot() +
-  geom_col(mapping = aes(x = Class, y = n, fill = Sex), position = "dodge") + facet_wrap( ~ Age) +
-  ggtitle("Deceased Count by Class (split by Sex and Age)")
+  geom_col(mapping = aes(x = Class, y = n, fill = Sex), position = "dodge") + facet_wrap(~ Age) +
+  labs(title = "Deceased Count by Class (split by Sex and Age)")
 ```
 
 **Observations**:
@@ -138,7 +138,7 @@ df_titanic %>%
   ggplot() +
   geom_col(mapping = aes(x = Class, y = n, fill = Sex), position = "dodge") +
   facet_wrap(~ Age) +
-  ggtitle("Passenger Count by Class split by Sex")
+  labs(title = "Passenger Count by Class split by Sex")
 ```
 **Observations**:
 - `Crew` was the largest `Class` on the Titanic
@@ -173,8 +173,8 @@ df_prop_survived
 
 df_prop_survived %>%
   ggplot() +
-  geom_col(mapping = aes(x = Class, y = Prop, fill = Sex), position = "dodge") + facet_wrap( ~ Age) +
-  ggtitle("Survival Count by Class (split by Sex and Age)")
+  geom_col(mapping = aes(x = Class, y = Prop, fill = Sex), position = "dodge") + facet_wrap(~ Age) +
+  labs(title = "Survival Count by Class (split by Sex and Age)")
 ```
 
 **Observations**:
