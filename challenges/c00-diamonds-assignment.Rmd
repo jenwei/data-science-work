@@ -59,7 +59,7 @@ __q1__ Create a plot of `price` vs `carat` of the `diamonds` dataset below. Docu
 diamonds %>%
   ggplot(aes(y = price, x = carat)) +
   geom_point() +
-  ggtitle('`price` vs `carat`')
+  labs(title = '`price` vs `carat`')
 ```
 
 **Observations**:
@@ -76,7 +76,7 @@ __q2__ Create a visualization showing variables `carat`, `price`, and `cut` simu
 diamonds %>%
   ggplot(aes(y = price, x = carat, color = cut)) +
   geom_point() +
-  ggtitle('`price` vs `carat` (colored by `cut`) of diamonds')
+  labs(title = '`price` vs `carat` (colored by `cut`) of diamonds')
 ```
 
 ```{r q2-task-plot-2}
@@ -84,7 +84,7 @@ diamonds %>%
   ggplot(aes(y = price, x = cut, color = carat)) +
   scale_colour_gradientn(colours = rainbow(4)) +
   geom_point(alpha = 1/10) +
-  ggtitle('`price` vs `cut` (colored by `carat`) of diamonds')
+  labs(title = '`price` vs `cut` (colored by `carat`) of diamonds')
 ```
 
 ```{r q2-task-plot-3}
@@ -92,7 +92,7 @@ diamonds %>%
   ggplot(aes(y = price, x = carat)) +
   geom_point() +
   facet_wrap(~cut) +
-  ggtitle('`price`  vs `carat` of diamonds separated by `cut`')
+  labs(title = '`price` vs `carat` of diamonds separated by `cut`')
 ```
 
 ```{r q2-task-plot-4}
@@ -102,7 +102,7 @@ diamonds %>%
   scale_x_log10() +
   scale_y_log10() +
   facet_wrap(~cut) +
-  ggtitle('`price`  vs `carat` of diamonds separated by `cut` on log-log scale')
+  labs(title = '`price`  vs `carat` of diamonds separated by `cut` on log-log scale')
 ```
 
 **Observations**:
@@ -130,18 +130,18 @@ The below plots were not requirements for either of the questions in this assign
 diamonds %>%
   ggplot() +
   geom_boxplot(aes(y = price, x = cut)) +
-  ggtitle('`price` vs `cut` of diamonds')
+  labs(title = '`price` vs `cut` of diamonds')
 
 diamonds %>%
   ggplot(aes(carat)) +
   geom_histogram() +
-  ggtitle('Distribution of diamonds by `carat`')
+  labs(title = 'Distribution of diamonds by `carat`')
 
 diamonds %>%
   mutate(roundedCarat = round(x = carat, digits = 1)) %>%
   ggplot(aes(roundedCarat)) +
   geom_histogram(fill = 'blue') +
-  ggtitle('Distribution of diamonds by `carat` rounded by one decimal place')
+  labs(title = 'Distribution of diamonds by `carat` rounded by one decimal place')
 ```
 
 # Communication
