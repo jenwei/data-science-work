@@ -179,40 +179,54 @@ df_prop_survived
 df_prop_survived %>%
   ggplot() +
   geom_col(mapping = aes(x = Class, y = Prop, fill = Sex), position = "dodge") +
-  facet_grid(~ Age) +
+  facet_grid(Sex ~ Age) +
   labs(title = "Survival Proportions by Class (split by Sex and Age)")
 ```
 
 **Observations**:
 
-- All children from `1st` and `2nd` survived, but more than half the children in `3rd` did not
+- As noticed in earlier questions of this challenge, the survival of women was disproportionally greater than the survival of men for most adults (i.e. aside from those in `3rd` class)
+- Children in `1st` and `2nd` class had high survival rates
+- All children from `1st` and `2nd` survived, but less than half the children in `3rd` survived
 - Of the surviving adults, aside from `3rd`, more than 50% of the women survived
-- Within `Crew`, over 75% of `Female` survived
+- Within `Crew`, over 75% of `Female` members survived
   - Wonder which part of the crew they were in - seems plausible that they were part of the Deck department
   - `Male` in `2nd` had the lowest survival rate
+- Normalizing the data validates that the proportion of people who survived from `Crew` is not vastly greater than the proportion of other classes
+  - When looking at proportions, the survival of `Crew` members is comparable to `2nd` class but is not the highest survival proportion
+  - From the count plots in earlier parts of the challenge, it seemed odd that so many more crew members survived than passengers, but it makes sense that the proportion isn't as high
+    - Since `Crew` represented the largest `Class` on the Titanic, it seemed like there were a lot of survivors based on the counts, but when looking at proportions, we can see that the survival proportion was not the greatest among the classes
 
 __q5__ Create a plot showing the group-proportion of passengers who *did* survive, along with aesthetics for `Class`, `Sex`, *and* `Age`. Document your observations below.
 
 *Hint*: Don't forget that you can use `facet_grid` to help consider additional variables!
-
+  
 ```{r q5-task}
-df_prop_survived <- filter(df_prop, Survived == "Yes")
+df_survived <- filter(df_titanic, Survived == "Yes")
 
-df_prop_survived
+total_survived <- sum(df_survived$n)
 
-df_prop_survived %>%
+df_survived_group_prop <-
+  df_survived %>%
+  group_by(Class, Sex, Age) %>%
+  mutate(Group_Prop = n / total_survived) %>%
+  ungroup()
+
+df_survived_group_prop
+
+df_survived_group_prop %>%
   ggplot() +
-  geom_col(mapping = aes(x = Class, y = Prop, fill = Sex), position = "dodge") +
+  geom_col(mapping = aes(x = Class, y = Group_Prop, fill = Sex)) +
   facet_grid(Sex ~ Age) +
-  labs(title = "Survival Proportions by Class (split by Age and Sex)")
+  labs(title = "Survival Group Proportions by Class (split by Sex and Age)")
 ```
 
 **Observations**:
 
-- As noticed in earlier questions of this challenge, the survival of women was disporportionally greater than the survival of men for most adults (aside from thos in `3rd` class)
-- Children in `1st` and `2nd` class had high survival rates
-- When looking at proportions, the survival of `Crew` members is comparable to `2nd` class but is not the highest survival proportion
-  - From the count plots in earlier parts of the challenge, it seemed odd that so many more crew members survived than passengers, but it makes sense that the proportion isn't as high since `Crew` represented the largest `Class` on the Titanic, so count-wise, it seemed like there were a lot of survivors, but when looking at proportions, we can see that the survival proportion was not the greatest amongst the classes
+- Among all the survivors, `Male` survivors from `Crew` made up the largest percentage (> 25%)
+- Among all the passengers, `Female` survivors from `1st` made up the largest percentage (~20%)
+- Children made up a small percentage of the survivors
+  - This is not unexpected given how few children there were aboard the Titanic
 
 # Notes
 <!-- -------------------------------------------------- -->
