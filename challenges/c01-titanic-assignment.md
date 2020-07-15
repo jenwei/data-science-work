@@ -229,7 +229,7 @@ df_titanic_deceased <- filter(df_titanic, Survived == "No")
 df_titanic_deceased %>%
   ggplot() +
   geom_col(mapping = aes(x = Class, y = n, fill = Sex), position = "dodge") +
-  labs(title = "Deceased Count by Class split by Sex")
+  labs(title = "Deceased Count by Class")
 ```
 
 ![](c01-titanic-assignment_files/figure-gfm/q3-task-deceased-1.png)<!-- -->
@@ -238,7 +238,7 @@ df_titanic_deceased %>%
 df_titanic_deceased %>%
   ggplot() +
   geom_col(mapping = aes(x = Class, y = n, fill = Sex), position = "dodge") + facet_wrap(~ Age) +
-  labs(title = "Deceased Count by Class (split by Sex and Age)")
+  labs(title = "Deceased Count by Class (split by Age)")
 ```
 
 ![](c01-titanic-assignment_files/figure-gfm/q3-task-deceased-2.png)<!-- -->
@@ -257,7 +257,7 @@ df_titanic_deceased %>%
         lifeboats
       - Reading the Wikipedia article (see `Crew` section), it seems
         like many of the crew were working on the engine or victualling,
-        which were on lower decks
+        which were on decks below where most passengers were
 
 <!-- end list -->
 

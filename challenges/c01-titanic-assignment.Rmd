@@ -122,12 +122,12 @@ df_titanic_deceased <- filter(df_titanic, Survived == "No")
 df_titanic_deceased %>%
   ggplot() +
   geom_col(mapping = aes(x = Class, y = n, fill = Sex), position = "dodge") +
-  labs(title = "Deceased Count by Class split by Sex")
+  labs(title = "Deceased Count by Class")
 
 df_titanic_deceased %>%
   ggplot() +
   geom_col(mapping = aes(x = Class, y = n, fill = Sex), position = "dodge") + facet_wrap(~ Age) +
-  labs(title = "Deceased Count by Class (split by Sex and Age)")
+  labs(title = "Deceased Count by Class (split by Age)")
 ```
 
 **Observations**:
@@ -138,7 +138,7 @@ df_titanic_deceased %>%
 - Across all classes, `Male` made up the majority of the deceased
 - The deceased counts increase from class to class
   - Looking at [a cross-section of the Titanic](https://en.wikipedia.org/wiki/First-class_facilities_of_the_RMS_Titanic#/media/File:Titanic_cutaway_diagram.png), this makes sense as `1st` was closest to the top deck and lifeboats
-  - Reading the Wikipedia article (see `Crew` section), it seems like many of the crew were working on the engine or victualling, which were on lower decks
+  - Reading the Wikipedia article (see `Crew` section), it seems like many of the crew were working on the engine or victualling, which were on decks below where most passengers were
 
 ``` {r q3-task-extra}
 df_titanic %>%
