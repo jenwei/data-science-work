@@ -1,7 +1,7 @@
 ---
 title: "Michelson Speed-of-light Measurements"
-author: "(Your name here)"
-date: 2020-
+author: "Jen Wei"
+date: 2020-07-15
 output:
   github_document:
     toc: true
@@ -101,16 +101,20 @@ Michelson *exactly*; why might this be?
 |            1 | 15 |   299810 |
 
 ```{r q1-task}
-## TODO: Compute summaries
-df_q1 <- NA
+df_q1 <- df_michelson %>%
+  group_by(Distinctness) %>%
+  summarise(n = n(), MeanVelocity = mean(Velocity))
+
 df_q1 %>%
   arrange(desc(Distinctness)) %>%
   knitr::kable()
 ```
 
 **Observations**:
-- Write your observations here!
 - Why might your table differ from Michelson's?
+  - The table generated has one significant figure, while Michelson's does not - this makes me wonder if Michelson might've rounded when creating his table
+
+-----
 
 The `Velocity` values in the dataset are the speed of light *in air*; Michelson
 introduced a couple of adjustments to estimate the speed of light in a vacuum.
