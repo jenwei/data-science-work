@@ -64,14 +64,14 @@ for more information.
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
     ## ✓ tibble  3.0.1     ✓ dplyr   1.0.0
     ## ✓ tidyr   1.1.0     ✓ stringr 1.4.0
     ## ✓ readr   1.3.1     ✓ forcats 0.5.0
 
-    ## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -92,7 +92,7 @@ below. Document your observations from the visual.
 diamonds %>%
   ggplot(aes(y = price, x = carat)) +
   geom_point() +
-  ggtitle('`price` vs `carat`')
+  labs(title = '`price` vs `carat`')
 ```
 
 ![](c00-diamonds-assignment_files/figure-gfm/q1-task-1.png)<!-- -->
@@ -117,30 +117,62 @@ aesthetic (`x`, `y`, etc.) to find an effective visual.
 diamonds %>%
   ggplot(aes(y = price, x = carat, color = cut)) +
   geom_point() +
-  ggtitle('`price` vs `carat` (colored by `cut`) of diamonds')
+  labs(title = '`price` vs `carat` (colored by `cut`) of diamonds')
 ```
 
 ![](c00-diamonds-assignment_files/figure-gfm/q2-task-plot-1-1.png)<!-- -->
+
+**Observations**:
+
+  - There is an overall positive relationship between `price` and the
+    other two variables (`carat` and `cut`)
+  - There is an overall negative relationship between `carat` and `cut`
+    where the density of `Premium` and `Ideal` cuts are in the lower (\<
+    \~ 2.5) carats
+  - The density of data seems to show an almost exponential relationship
+    between `price` and `carat` (between 0 and 2.5)
+  - `Fair` cuts appear to be the cheaper options for a given `carat`
+    though the emphasis here should be *appear* since there’s a fair bit
+    of variance in prices for `Fair` cuts
+  - There are no `Ideal` cuts for diamonds greater than \~3.5 carats in
+    this dataset
+
+<!-- end list -->
 
 ``` r
 diamonds %>%
   ggplot(aes(y = price, x = cut, color = carat)) +
   scale_colour_gradientn(colours = rainbow(4)) +
   geom_point(alpha = 1/10) +
-  ggtitle('`price` vs `cut` (colored by `carat`) of diamonds')
+  labs(title = '`price` vs `cut` (colored by `carat`) of diamonds')
 ```
 
 ![](c00-diamonds-assignment_files/figure-gfm/q2-task-plot-2-1.png)<!-- -->
+
+**Observations**:
+
+  - There is an overall positive relationship between `price` and
+    `carat` that is consistent across all cuts
+
+<!-- end list -->
 
 ``` r
 diamonds %>%
   ggplot(aes(y = price, x = carat)) +
   geom_point() +
   facet_wrap(~cut) +
-  ggtitle('`price`  vs `carat` of diamonds separated by `cut`')
+  labs(title = '`price` vs `carat` of diamonds separated by `cut`')
 ```
 
 ![](c00-diamonds-assignment_files/figure-gfm/q2-task-plot-3-1.png)<!-- -->
+
+**Observations**:
+
+  - The relationship between `price` and `carat` seems consistent across
+    cuts though there’s more variance with `Fair` cuts - makes me wonder
+    what/how the data was collected for this set and why that’s the case
+
+<!-- end list -->
 
 ``` r
 diamonds %>%
@@ -149,35 +181,17 @@ diamonds %>%
   scale_x_log10() +
   scale_y_log10() +
   facet_wrap(~cut) +
-  ggtitle('`price`  vs `carat` of diamonds separated by `cut` on log-log scale')
+  labs(title = '`price`  vs `carat` of diamonds separated by `cut` on log-log scale')
 ```
 
 ![](c00-diamonds-assignment_files/figure-gfm/q2-task-plot-4-1.png)<!-- -->
 
 **Observations**:
 
-From plot 1 - There is an overall positive relationship between `price`
-and the other two variables (`carat` and `cut`) - There is an overall
-negative relationship between `carat` and `cut` where the density of
-`Premium` and `Ideal` cuts are in the lower carats - The density of data
-seems to show an almost exponential relationship between `price` and
-`carat` (between 0 and 2.5) - `Fair` cuts appears to be (but is not
-necessarily) the cheaper option for a given `carat` as shown in other
-plots in this question - There are no `Ideal` cuts for diamonds greater
-than \~3.5 carats in this dataset
-
-From plot 2 - There is an overall positive relationship between `price`
-and `carat` that is consistent across all cuts
-
-From plot 3 - The relationship between `price` and `carat` seems
-consistent across cuts though there’s more variance with `Fair` cuts -
-makes me wonder what/how the data was collected for this set and why
-that’s the case
-
-From plot 4 - On a log-log scale, the relationship between `price` and
-`carat` across cuts seems consistent and relatively linear. My
-math/stats memory is hazy though, so I’m not sure what to extract from
-that observation at the moment
+  - On a log-log scale, the relationship between `price` and `carat`
+    across cuts seems consistent and relatively linear - my math/stats
+    memory is hazy though, so I’m not sure what to extract from that
+    observation at the moment
 
 ## Extra Plots
 
@@ -189,7 +203,7 @@ sense of other plots.
 diamonds %>%
   ggplot() +
   geom_boxplot(aes(y = price, x = cut)) +
-  ggtitle('`price` vs `cut` of diamonds')
+  labs(title = '`price` vs `cut` of diamonds')
 ```
 
 ![](c00-diamonds-assignment_files/figure-gfm/extra%20plots-1.png)<!-- -->
@@ -198,7 +212,7 @@ diamonds %>%
 diamonds %>%
   ggplot(aes(carat)) +
   geom_histogram() +
-  ggtitle('Distribution of diamonds by `carat`')
+  labs(title = 'Distribution of diamonds by `carat`')
 ```
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
@@ -210,7 +224,7 @@ diamonds %>%
   mutate(roundedCarat = round(x = carat, digits = 1)) %>%
   ggplot(aes(roundedCarat)) +
   geom_histogram(fill = 'blue') +
-  ggtitle('Distribution of diamonds by `carat` rounded by one decimal place')
+  labs(title = 'Distribution of diamonds by `carat` rounded by one decimal place')
 ```
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
