@@ -73,10 +73,12 @@ df_titanic %>% summarize(total = sum(n))
 
 **Observations**:
 
-- According to the [Wikipedia article on the RMS Titanic](https://en.wikipedia.org/wiki/Sinking_of_the_RMS_Titanic#Casualties_and_survivors) (under the "Casualties and Survivors"), the total count of passengers was approximately 1,316, the total count of the crew was 908, and the total count of passengers and crew was 2,224
+- According to the [Wikipedia article on the Sinking of the RMS Titanic](https://en.wikipedia.org/wiki/Sinking_of_the_RMS_Titanic#Casualties_and_survivors) (under the "Casualties and Survivors"), the total count of passengers was approximately 1,316, the total count of the crew was 908, and the total count of passengers and crew was 2,224
 - Based on the dataset, the total count of passengers was 2,201
 - There is trivial difference between the total count of passengers and crew from Wikipedia and that of the dataset (23) (~1%)
 - My guess is that the difference is due to some data scrubbing - from [some Googling](https://www.codementor.io/@innat_2k14/titanic-kaggle-machine-learning-from-disaster-part-1-10gbvqzguc), it seems like this dataset is from Kaggle, and data is often pre-processed to make it usable
+- Also, interestingly enough, the "Passengers" section of the [original Wikipedia article on the RMS Titanic](https://en.wikipedia.org/wiki/RMS_Titanic#Passengers) mentions "Titanic's passengers numbered approximately 1,317 people" despite supposedly referencing the other one (Sinking of the RMS Titanic)
+  - Seems like someone might've misquoted and now makes me a bit weary of trusting the data from these Wikipedia articles
 
 
 __q3__ Create a plot showing the count of passengers who *did* survive, along with aesthetics for `Class` and `Sex`. Document your observations below.
