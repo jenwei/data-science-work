@@ -76,10 +76,14 @@ df_titanic %>% summarize(total = sum(n))
 - According to the [Wikipedia article on the Sinking of the RMS Titanic](https://en.wikipedia.org/wiki/Sinking_of_the_RMS_Titanic#Casualties_and_survivors) (under the "Casualties and Survivors"), the total count of passengers was approximately 1,316, the total count of the crew was 908, and the total count of passengers and crew was 2,224
 - Based on the dataset, the total count of passengers was 2,201
 - There is trivial difference between the total count of passengers and crew from Wikipedia and that of the dataset (23) (~1%)
-- My guess is that the difference is due to some data scrubbing - from [some Googling](https://www.codementor.io/@innat_2k14/titanic-kaggle-machine-learning-from-disaster-part-1-10gbvqzguc), it seems like this dataset is from Kaggle, and data is often pre-processed to make it usable
-- Also, interestingly enough, the "Passengers" section of the [original Wikipedia article on the RMS Titanic](https://en.wikipedia.org/wiki/RMS_Titanic#Passengers) mentions "Titanic's passengers numbered approximately 1,317 people" despite supposedly referencing the other one (Sinking of the RMS Titanic)
-  - Seems like someone might've misquoted and now makes me a bit weary of trusting the data from these Wikipedia articles
 
+Why?
+- One guess is that the difference is due to some data scrubbing - from [some Googling](https://www.codementor.io/@innat_2k14/titanic-kaggle-machine-learning-from-disaster-part-1-10gbvqzguc), it seems like this dataset is from Kaggle, and data is often pre-processed to make it usable
+- Another guess is that the journey was not direct, so there might've been some miscounts at each stop along the way
+
+Also!
+- Interestingly enough, the "Passengers" section of the [original Wikipedia article on the RMS Titanic](https://en.wikipedia.org/wiki/RMS_Titanic#Passengers) mentions "Titanic's passengers numbered approximately 1,317 people" despite supposedly referencing the other one (Sinking of the RMS Titanic)
+  - Seems like someone might've misquoted and now makes me a bit weary of trusting the data from these Wikipedia articles
 
 __q3__ Create a plot showing the count of passengers who *did* survive, along with aesthetics for `Class` and `Sex`. Document your observations below.
 
@@ -103,7 +107,7 @@ df_titanic_survived %>%
 
 **Observations**:
 
-- There were no children in the crew (which makes sense)
+- There were no children in the crew (which makes sense because that'd be illegal I think otherwise?)
 - In `1st`, the majority of the survivors were `Female`
 - In `Crew`, the majority of survivors were `Male` though it's likely that they also made up the majority of the crew (can generate more plots to verify this)
   - For some reason, this surprises me (though this is only part of the picture and more plots can be generated to verify this)
@@ -127,12 +131,13 @@ df_titanic_deceased %>%
 ```
 
 **Observations**:
-- The children who did not survive were all in third class
+
+- The children who did not survive were all in `3rd` class
 - People in `1st` had the lowest deceased count among the four classes
 - `Crew` had the largest decreased count (specifically for `Male` - there were few deceased `Female` for that class)
 - Across all classes, `Male` made up the majority of the deceased
 - The deceased counts increase from class to class
-  - Looking at [a cross-section of the Titanic](https://en.wikipedia.org/wiki/First-class_facilities_of_the_RMS_Titanic#/media/File:Titanic_cutaway_diagram.png), this makes sense as `1st` was closest to the deck and lifeboats
+  - Looking at [a cross-section of the Titanic](https://en.wikipedia.org/wiki/First-class_facilities_of_the_RMS_Titanic#/media/File:Titanic_cutaway_diagram.png), this makes sense as `1st` was closest to the top deck and lifeboats
   - Reading the Wikipedia article (see `Crew` section), it seems like many of the crew were working on the engine or victualling, which were on lower decks
 
 ``` {r q3-task-extra}
@@ -143,6 +148,7 @@ df_titanic %>%
   labs(title = "Passenger Count by Class split by Sex")
 ```
 **Observations**:
+
 - `Crew` was the largest `Class` on the Titanic
 
 # Deeper Look
@@ -158,10 +164,7 @@ The following code computes proportions within each `Class, Sex, Age` group.
 df_prop <-
   df_titanic %>%
   group_by(Class, Sex, Age) %>%
-  mutate(
-    Total = sum(n),
-    Prop = n / Total
-  ) %>%
+  mutate(Total = sum(n), Prop = n / Total) %>%
   ungroup()
 df_prop
 ```
@@ -175,11 +178,13 @@ df_prop_survived
 
 df_prop_survived %>%
   ggplot() +
-  geom_col(mapping = aes(x = Class, y = Prop, fill = Sex), position = "dodge") + facet_wrap(~ Age) +
-  labs(title = "Survival Count by Class (split by Sex and Age)")
+  geom_col(mapping = aes(x = Class, y = Prop, fill = Sex), position = "dodge") +
+  facet_grid(~ Age) +
+  labs(title = "Survival Proportions by Class (split by Sex and Age)")
 ```
 
 **Observations**:
+
 - All children from `1st` and `2nd` survived, but more than half the children in `3rd` did not
 - Of the surviving adults, aside from `3rd`, more than 50% of the women survived
 - Within `Crew`, over 75% of `Female` survived
@@ -191,11 +196,23 @@ __q5__ Create a plot showing the group-proportion of passengers who *did* surviv
 *Hint*: Don't forget that you can use `facet_grid` to help consider additional variables!
 
 ```{r q5-task}
+df_prop_survived <- filter(df_prop, Survived == "Yes")
+
+df_prop_survived
+
+df_prop_survived %>%
+  ggplot() +
+  geom_col(mapping = aes(x = Class, y = Prop, fill = Sex), position = "dodge") +
+  facet_grid(Sex ~ Age) +
+  labs(title = "Survival Proportions by Class (split by Age and Sex)")
 ```
 
 **Observations**:
 
-- Write your observations here.
+- As noticed in earlier questions of this challenge, the survival of women was disporportionally greater than the survival of men for most adults (aside from thos in `3rd` class)
+- Children in `1st` and `2nd` class had high survival rates
+- When looking at proportions, the survival of `Crew` members is comparable to `2nd` class but is not the highest survival proportion
+  - From the count plots in earlier parts of the challenge, it seemed odd that so many more crew members survived than passengers, but it makes sense that the proportion isn't as high since `Crew` represented the largest `Class` on the Titanic, so count-wise, it seemed like there were a lot of survivors, but when looking at proportions, we can see that the survival proportion was not the greatest amongst the classes
 
 # Notes
 <!-- -------------------------------------------------- -->
