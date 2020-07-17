@@ -7,6 +7,7 @@ Jen Wei
       - [Individual](#individual)
       - [Team](#team)
       - [Due Date](#due-date)
+      - [Challenge](#challenge)
       - [Bibliography](#bibliography)
 
 *Purpose*: When studying physical problems, there is an important
@@ -56,6 +57,8 @@ All the deliverables stated in the rubrics above are due on the day of
 the class discussion of that exercise. See the
 [Syllabus](https://docs.google.com/document/d/1jJTh2DH8nVJd2eyMMoyNGroReo0BKcJrz1eONi3rPSc/edit?usp=sharing)
 for more information.
+
+## Challenge
 
 ``` r
 # Libraries
@@ -149,7 +152,15 @@ df_q1 %>%
 | 2            | 39 |     299858.5 |
 | 1            | 15 |     299808.0 |
 
-**Observations**: - Why might your table differ from Michelson’s?
+**Observations**:
+
+  - Why might your table differ from Michelson’s?
+      - The table generated has one significant figure, while
+        Michelson’s does not - this makes me wonder if Michelson
+        might’ve rounded when creating his table
+      - Also, as mentioned in the blurb below, the dataset contains
+        values based off the speed of light in air, while Michelson’s
+        values were based off the speed of light in a vacuum
 
 -----
 
@@ -165,12 +176,26 @@ adjustment to `Velocity`. Assign this new dataframe to `df_q2`.
 
 ``` r
 ## TODO: Adjust the data, assign to df_q2
-df_q2 <- NA
+df_q2 <- df_michelson %>%
+  mutate(VelocityVacuum = Velocity + 92)
 
 df_q2
 ```
 
-    ## [1] NA
+    ## # A tibble: 100 x 5
+    ##    Date                Distinctness  Temp Velocity VelocityVacuum
+    ##    <dttm>              <fct>        <dbl>    <dbl>          <dbl>
+    ##  1 1879-06-05 00:00:00 3               76   299850         299942
+    ##  2 1879-06-07 00:00:00 2               72   299740         299832
+    ##  3 1879-06-07 00:00:00 2               72   299900         299992
+    ##  4 1879-06-07 00:00:00 2               72   300070         300162
+    ##  5 1879-06-07 00:00:00 2               72   299930         300022
+    ##  6 1879-06-07 00:00:00 2               72   299850         299942
+    ##  7 1879-06-09 00:00:00 3               83   299950         300042
+    ##  8 1879-06-09 00:00:00 3               83   299980         300072
+    ##  9 1879-06-09 00:00:00 3               83   299980         300072
+    ## 10 1879-06-09 00:00:00 3               83   299880         299972
+    ## # … with 90 more rows
 
 As part of his study, Michelson assessed the various potential sources
 of error, and provided his best-guess for the error in his
@@ -178,8 +203,8 @@ speed-of-light estimate. These values are provided in
 `LIGHTSPEED_MICHELSON`—his nominal estimate—and
 `LIGHTSPEED_PM`—plus/minus bounds on his estimate. Put differently,
 Michelson believed the true value of the speed-of-light probably lay
-between `LIGHTSPEED_MICHELSON - LIGHTSPEED_PM` and `LIGHTSPEED_MICHELSON
-+ LIGHTSPEED_PM`.
+between `LIGHTSPEED_MICHELSON - LIGHTSPEED_PM` and
+`LIGHTSPEED_MICHELSON` `+` `LIGHTSPEED_PM`.
 
 Let’s introduce some terminology:\[2\]
 
@@ -199,15 +224,129 @@ uncertainty) greater or less than the true error?
 
 ``` r
 ## TODO: Compare Michelson's estimate and error against the true value
-## Your code here!
+TRUE_ERROR <- abs(LIGHTSPEED_VACUUM - LIGHTSPEED_MICHELSON)
+TRUE_ERROR
 ```
 
+    ## [1] 151.542
+
+``` r
+ERROR_DIFF <- TRUE_ERROR - LIGHTSPEED_PM
+ERROR_DIFF
+```
+
+    ## [1] 100.542
+
 **Observations**:
+
+  - Michelson’s estimate of the error (his uncertainty), 51, was far
+    less than the true error, 151.542, which is almost three times that
+    of his estimated error
 
 **q4** You have access to a few other variables. Construct a few
 visualizations of `VelocityVacuum` against these other factors. Are
 there other patterns in the data that might help explain the difference
 between Michelson’s estimate and `LIGHTSPEED_VACUUM`?
+
+***Distinctness***
+
+``` r
+df_q2 %>%
+  group_by(Distinctness) %>%
+  summarise(n = n(), MeanVelocityVacuum = mean(VelocityVacuum), MinVelocityVacuum = min(VelocityVacuum), MaxVelocityVacuum = max(VelocityVacuum), Range = abs(MaxVelocityVacuum - MinVelocityVacuum)) %>%
+  ungroup()
+```
+
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+    ## # A tibble: 3 x 6
+    ##   Distinctness     n MeanVelocityVacuum MinVelocityVacuum MaxVelocityVacu… Range
+    ##   <fct>        <int>              <dbl>             <dbl>            <dbl> <dbl>
+    ## 1 1               15            299900             299712           299992   280
+    ## 2 2               39            299950.            299742           300162   420
+    ## 3 3               46            299954.            299812           300092   280
+
+``` r
+df_q2 %>%
+  ggplot() +
+  geom_bar(mapping = aes(x = VelocityVacuum/10000)) +
+  facet_grid(~ Distinctness) +
+  labs(title = "Distribution of Data by Distinctness", x = "VelocityVacuum/10000")
+```
+
+![](c02-michelson-assignment_files/figure-gfm/q4-task-plot-distinctness-1.png)<!-- -->
+
+**Observations:**
+
+  - When looking at `VelocityVacuum` split by `Distinctness`, the range
+    of densities seems to narrow between 2 and 3, which aligns with my
+    expectations since I’d expect data to be more consistent from
+    higher-quality images
+  - The range for 1 is equal to that of 3, but the sample size is less
+    than a third of 3, and it doesn’t seem like the data converges at
+    any point (i.e. has a peak) like the other two `Distinctness` bins
+  - Interestingly enough, the poor images bin (1) has the lowest
+    `MeanVelocityVacuum`, and accounting for the vacuum actually makes
+    the data *further* from the true velocity
+      - Wonder if we should’ve subtracted instead of added 92 km/s?
+
+***Temperature***
+
+``` r
+df_q2 %>%
+  ggplot() +
+  geom_point(mapping = aes(y = VelocityVacuum/10000, x = Temp)) +
+  facet_grid(~ Distinctness) +
+  labs(title = "Distribution of VelocityVacuum by Temperature")
+```
+
+![](c02-michelson-assignment_files/figure-gfm/q4-task-plot-temp-1.png)<!-- -->
+
+**Observations:**
+
+  - Looking at `VelocityVacuum` by `Temperature`, there does not seem to
+    be an obvious relation between the two as datapoints
+
+***Date***
+
+``` r
+df_q2 %>%
+  group_by(Distinctness) %>%
+  summarise(n = n(), EarliestDate = min(Date), LatestDate = max(Date)) %>%
+  ungroup()
+```
+
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+    ## # A tibble: 3 x 4
+    ##   Distinctness     n EarliestDate        LatestDate         
+    ##   <fct>        <int> <dttm>              <dttm>             
+    ## 1 1               15 1879-06-12 00:00:00 1879-06-18 00:00:00
+    ## 2 2               39 1879-06-07 00:00:00 1879-07-01 00:00:00
+    ## 3 3               46 1879-06-05 00:00:00 1879-07-02 00:00:00
+
+``` r
+df_q2 %>%
+  ggplot() +
+  geom_point(mapping = aes(y = VelocityVacuum/10000, x = Date, color = Temp)) +
+  scale_color_gradient(low = "blue", high = "red") +
+  facet_wrap(~ Distinctness) +
+  labs(title = "Distribution of VelocityVacuum by Date")
+```
+
+![](c02-michelson-assignment_files/figure-gfm/q4-task-plot-date-1.png)<!-- -->
+
+**Observations:**
+
+  - Looking at `VelocityVacuum` by `Date`, there does not seem to be an
+    obvious relation between the two
+  - Seems like most of the poor images were collected between a six-day
+    window
+      - Would’ve expected the poor images to have been collected at the
+        beginning of the data collection period, but instead, it seems
+        to be in the middle as the first datapoint was collected on
+        1879-06-05 and the last datapoint was collected on 1879-07-02
+        (across all Distinctness bins)
 
 ## Bibliography
 
