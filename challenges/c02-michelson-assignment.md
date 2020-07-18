@@ -328,13 +328,23 @@ df_q2 %>%
 ``` r
 df_q2 %>%
   ggplot() +
+  geom_point(mapping = aes(y = VelocityVacuum/10000, x = Date)) +
+  facet_wrap(~ Distinctness) +
+  labs(title = "VelocityVacuum by Date Split by Distribution")
+```
+
+![](c02-michelson-assignment_files/figure-gfm/q4-task-plot-date-1.png)<!-- -->
+
+``` r
+df_q2 %>%
+  ggplot() +
   geom_point(mapping = aes(y = VelocityVacuum/10000, x = Date, color = Temp)) +
   scale_color_gradient(low = "blue", high = "red") +
   facet_wrap(~ Distinctness) +
   labs(title = "VelocityVacuum by Date Split by Distribution")
 ```
 
-![](c02-michelson-assignment_files/figure-gfm/q4-task-plot-date-1.png)<!-- -->
+![](c02-michelson-assignment_files/figure-gfm/q4-task-plot-date-2.png)<!-- -->
 
 **Observations:**
 
