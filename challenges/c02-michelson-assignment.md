@@ -248,6 +248,9 @@ visualizations of `VelocityVacuum` against these other factors. Are
 there other patterns in the data that might help explain the difference
 between Michelson’s estimate and `LIGHTSPEED_VACUUM`?
 
+**Note:** For readability of labels, `VelocityVacuum` in most, if not
+all, plots will be divided by 10,000
+
 ***Distinctness***
 
 ``` r
@@ -271,7 +274,7 @@ df_q2 %>%
   ggplot() +
   geom_bar(mapping = aes(x = VelocityVacuum/10000)) +
   facet_grid(~ Distinctness) +
-  labs(title = "Distribution of Data by Distinctness", x = "VelocityVacuum/10000")
+  labs(title = "Distribution of Data Split by Distinctness", x = "VelocityVacuum/10000")
 ```
 
 ![](c02-michelson-assignment_files/figure-gfm/q4-task-plot-distinctness-1.png)<!-- -->
@@ -288,7 +291,9 @@ df_q2 %>%
   - Interestingly enough, the poor images bin (1) has the lowest
     `MeanVelocityVacuum`, and accounting for the vacuum actually makes
     the data *further* from the true velocity
-      - Wonder if we should’ve subtracted instead of added 92 km/s?
+      - Wonder if we should’ve subtracted instead of added 92 km/s? More
+        broadly, I wonder if this correction was too simple/if there are
+        other corrections that should’ve been addressed
 
 ***Temperature***
 
@@ -297,7 +302,7 @@ df_q2 %>%
   ggplot() +
   geom_point(mapping = aes(y = VelocityVacuum/10000, x = Temp)) +
   facet_grid(~ Distinctness) +
-  labs(title = "Distribution of VelocityVacuum by Temperature")
+  labs(title = "Distribution of VelocityVacuum by Temperature Split by Distinctness")
 ```
 
 ![](c02-michelson-assignment_files/figure-gfm/q4-task-plot-temp-1.png)<!-- -->
@@ -305,7 +310,8 @@ df_q2 %>%
 **Observations:**
 
   - Looking at `VelocityVacuum` by `Temperature`, there does not seem to
-    be an obvious relation between the two as datapoints
+    be an obvious relation between the two, which suggests that
+    `Temperature` was not the driving variable for measured velocity
 
 ***Date***
 
@@ -330,7 +336,7 @@ df_q2 %>%
   ggplot() +
   geom_point(mapping = aes(y = VelocityVacuum/10000, x = Date)) +
   facet_wrap(~ Distinctness) +
-  labs(title = "VelocityVacuum by Date Split by Distribution")
+  labs(title = "VelocityVacuum by Date Split by Distinctness")
 ```
 
 ![](c02-michelson-assignment_files/figure-gfm/q4-task-plot-date-1.png)<!-- -->
@@ -341,7 +347,7 @@ df_q2 %>%
   geom_point(mapping = aes(y = VelocityVacuum/10000, x = Date, color = Temp)) +
   scale_color_gradient(low = "blue", high = "red") +
   facet_wrap(~ Distinctness) +
-  labs(title = "VelocityVacuum by Date Split by Distribution")
+  labs(title = "VelocityVacuum by Date Split by Distinctness Colored by Temp")
 ```
 
 ![](c02-michelson-assignment_files/figure-gfm/q4-task-plot-date-2.png)<!-- -->
@@ -354,9 +360,10 @@ df_q2 %>%
     window
       - Would’ve expected the poor images to have been collected at the
         beginning of the data collection period, but instead, it seems
-        to be in the middle as the first datapoint was collected on
-        1879-06-05 and the last datapoint was collected on 1879-07-02
-        (across all Distinctness bins)
+        to be in the middle
+          - The first datapoint was collected on 1879-06-05 and the last
+            datapoint was collected on 1879-07-02 (across all
+            Distinctness bins)
 
 ## Bibliography
 

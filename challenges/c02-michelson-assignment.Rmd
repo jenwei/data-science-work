@@ -179,6 +179,8 @@ of `VelocityVacuum` against these other factors. Are there other patterns in the
 data that might help explain the difference between Michelson's estimate and
 `LIGHTSPEED_VACUUM`?
 
+**Note:** For readability of labels, `VelocityVacuum` in most, if not all, plots will be divided by 10,000
+
 ___Distinctness___
 
 ``` {r q4-task-plot-distinctness}
@@ -191,7 +193,7 @@ df_q2 %>%
   ggplot() +
   geom_bar(mapping = aes(x = VelocityVacuum/10000)) +
   facet_grid(~ Distinctness) +
-  labs(title = "Distribution of Data by Distinctness", x = "VelocityVacuum/10000")
+  labs(title = "Distribution of Data Split by Distinctness", x = "VelocityVacuum/10000")
 ```
 
 **Observations:**
@@ -199,7 +201,7 @@ df_q2 %>%
 - When looking at `VelocityVacuum` split by `Distinctness`, the range of densities seems to narrow between 2 and 3, which aligns with my expectations since I'd expect data to be more consistent from higher-quality images
 - The range for 1 is equal to that of 3, but the sample size is less than a third of 3, and it doesn't seem like the data converges at any point (i.e. has a peak) like the other two `Distinctness` bins
 - Interestingly enough, the poor images bin (1) has the lowest `MeanVelocityVacuum`, and accounting for the vacuum actually makes the data _further_ from the true velocity
-  - Wonder if we should've subtracted instead of added 92 km/s?
+  - Wonder if we should've subtracted instead of added 92 km/s? More broadly, I wonder if this correction was too simple/if there are other corrections that should've been addressed
 
 ___Temperature___
 
@@ -208,12 +210,12 @@ df_q2 %>%
   ggplot() +
   geom_point(mapping = aes(y = VelocityVacuum/10000, x = Temp)) +
   facet_grid(~ Distinctness) +
-  labs(title = "Distribution of VelocityVacuum by Temperature")
+  labs(title = "Distribution of VelocityVacuum by Temperature Split by Distinctness")
 ```
 
 **Observations:**
 
-- Looking at `VelocityVacuum` by `Temperature`, there does not seem to be an obvious relation between the two as datapoints
+- Looking at `VelocityVacuum` by `Temperature`, there does not seem to be an obvious relation between the two, which suggests that `Temperature` was not the driving variable for measured velocity
 
 ___Date___
 ``` {r q4-task-plot-date}
@@ -226,21 +228,22 @@ df_q2 %>%
   ggplot() +
   geom_point(mapping = aes(y = VelocityVacuum/10000, x = Date)) +
   facet_wrap(~ Distinctness) +
-  labs(title = "VelocityVacuum by Date Split by Distribution")
+  labs(title = "VelocityVacuum by Date Split by Distinctness")
 
 df_q2 %>%
   ggplot() +
   geom_point(mapping = aes(y = VelocityVacuum/10000, x = Date, color = Temp)) +
   scale_color_gradient(low = "blue", high = "red") +
   facet_wrap(~ Distinctness) +
-  labs(title = "VelocityVacuum by Date Split by Distribution")
+  labs(title = "VelocityVacuum by Date Split by Distinctness Colored by Temp")
 ```
 
 **Observations:**
 
 - Looking at `VelocityVacuum` by `Date`, there does not seem to be an obvious relation between the two
 - Seems like most of the poor images were collected between a six-day window
-    - Would've expected the poor images to have been collected at the beginning of the data collection period, but instead, it seems to be in the middle as the first datapoint was collected on 1879-06-05 and the last datapoint was collected on 1879-07-02 (across all Distinctness bins)
+    - Would've expected the poor images to have been collected at the beginning of the data collection period, but instead, it seems to be in the middle
+        - The first datapoint was collected on 1879-06-05 and the last datapoint was collected on 1879-07-02 (across all Distinctness bins)
 
 ## Bibliography
 
