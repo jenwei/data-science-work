@@ -177,6 +177,7 @@ df_stang_long %>%
 df_stang_long %>%
   ggplot() +
   geom_boxplot(aes(y = mu, x = thick, group = thick)) +
+  geom_hline(yintercept = 0.31625, color = "blue", linetype = "dashed") +
   coord_flip() +
   labs(title = "Shear Modulus by Thickness", x = "thickness (in)", y = "Sheer Modulus (mu)")
 ```
