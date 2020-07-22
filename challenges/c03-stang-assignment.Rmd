@@ -145,29 +145,32 @@ __q3__ Create a visualization to investigate your question from q1 above. Can yo
 df_stang_long %>%
   ggplot() +
   geom_boxplot(aes(y = E, x = thick, group = thick)) +
+  geom_hline(yintercept = 10125, color = "blue", linetype = "dashed") +
   coord_flip() +
-  labs(title = "E by thickness", x = "thickness (in)")
+  labs(title = "Elastic Modulus by Thickness", x = "thickness (in)", y = "Elastic Modulus (E)")
 ```
 
 **Observations**:
 
-- Overall, there is an inverse relationship between thickness and E - as E increases, thickness decreases
-  - However, this relationship is not supported by the data when `thick = 0.064` as the median E is greater than that of `thick = 0.032`
+- Overall, there is an inverse relationship between thickness and E though the relationship is not linear across the thicknesses tested
+  - When `thick = 0.064`, the median E is greater than that of `thick = 0.032`
+  - `0.081` has the lowest E while E > 10,125 for all other thicknesses
 
 ```{r q3-task-plot-1B}
 df_stang_long %>%
   ggplot() +
   geom_boxplot(aes(y = E, x = thick, group = thick)) +
+  geom_hline(yintercept = 10125, color = "blue", linetype = "dashed") +
   facet_grid(~ angle ~ .) +
   coord_flip() +
-  labs(title = "E by thickness (facet by angle) ", x = "thickness (in)")
+  labs(title = "Elastic Modulus by Thickness (facet by angle)", x = "thickness (in)", y = "Elastic Modulus (E)")
 ```
 
 **Observations**:
 
-- Looking into the data more closely (i.e. by angle), the relationship between E and thickness becomes more questionable as the inverse relationship is supported by data when `angle = 45` but not when `angle = 0`
-- However, E for `thick = 0.022` seem consistent across all three angles
-- E for `thick = 0.081` also somewhat consistent across all three angles
+- Angle does not impact the general observation from the prior plot where `thick = 0.081` values all have E values of < 10,125 (the dotted blue line)
+- E for `thick = 0.022` seems consistent across all three angles
+- E for `thick = 0.081` also seems somewhat consistent across all three angles
   - Range of medians (and values in general) is much wider for `thick = 0.081` than `thick = 0.022` but is still distinct from other thicknesses
 
 ```{r q3-task-plot-2A}
@@ -175,7 +178,7 @@ df_stang_long %>%
   ggplot() +
   geom_boxplot(aes(y = mu, x = thick, group = thick)) +
   coord_flip() +
-  labs(title = "mu by thickness", x = "thickness (in)")
+  labs(title = "Shear Modulus by Thickness", x = "thickness (in)", y = "Sheer Modulus (mu)")
 ```
 
 **Observations**:
@@ -187,15 +190,16 @@ df_stang_long %>%
 df_stang_long %>%
   ggplot() +
   geom_boxplot(aes(y = mu, x = thick, group = thick)) +
+  geom_hline(yintercept = 0.31625, color = "blue", linetype = "dashed") +
   facet_grid(~ angle ~ .) +
   coord_flip() +
-  labs(title = "mu by thickness (facet by angle) ", x = "thickness (in)")
+  labs(title = "Sheer Modulus by Thickness (facet by angle)", x = "thickness (in)", y = "Sheer Modulus (mu)")
 ```
 
 **Observations**:
 
-- Unlike E, mu data seems more chaotic and doesn't seem to show a relationship between thickness and mu in general or by angle
-- Across the angles, there aren't obvious patterns
+- Across all angles, the median sheer modulus (`mu`) is less than 0.31625 (the dotted blue line) for `thick = 0.081` and is the lowest value across all thicknesses
+- All `mu` values less than 0.31625 are associated with `thick = 0.081`
 - The lowest thickness (`thick = 0.022`) has the widest range of mu values 
 
 __q4__ Consider the following statement:
