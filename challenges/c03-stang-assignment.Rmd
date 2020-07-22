@@ -1,13 +1,13 @@
 ---
 title: "Aluminum Data"
-author: "(Your name here)"
-date: 2020-
+author: "Jen Wei"
+date: 2020-07-20
 output:
   github_document:
     toc: true
 ---
 
-*Purpose*: When designing structures such as bridges, boats, and planes, the design team needs data about *material properties*. Often when we engineers first learn about material properties through coursework, we talk about abstract ideas and look up values in tables without ever looking at the data that gave rise to published properties. In this challenge you'll study an aluminum alloy dataset: Studying these data will give you a better sense of the challenges underlying published material values.
+*Purpose*: When designing structures such as bridges, boats, and planes, the design team needs data about *material properties*. Often when we engineers first learn about material properties through coursework, we talk about abstract ideas and look up values in tables without ever looking at the data that gave rise to published properties. In this challenge, you'll study an aluminum alloy dataset: Studying these data will give you a better sense of the challenges underlying published material values.
 
 In this challenge, you will load a real dataset, wrangle it into tidy form, and perform EDA to learn more about the data.
 
@@ -71,7 +71,15 @@ __q1__ Tidy `df_stang` to produce `df_stang_long`. You should have column names 
 ```{r q1-task}
 ## TASK: Tidy `df_stang`
 df_stang_long <-
-  df_stang
+  df_stang %>%
+  pivot_longer(
+    names_sep = "_",
+    names_to = c(".value", "angle"),
+    starts_with("E") | starts_with("mu"),
+    values_drop_na = TRUE
+  ) %>%
+  mutate(angle = as.integer(angle)) %>%
+  subset(E >= 0, mu >= 0)
 
 df_stang_long
 ```
@@ -106,34 +114,89 @@ print("Very good!")
 __q2__ Perform a basic EDA on the aluminum data *without visualization*. Use your analysis to answer the questions under *observations* below. In addition, add your own question that you'd like to answer about the data.
 
 ```{r q2-task}
-##
+df_stang_long %>% glimpse()
+
+df_stang_long %>%
+  summary()
 ```
 
 **Observations**:
 
 - Is there "one true value" for the material properties of Aluminum?
+  - No as the measured values fluctuate for `E` and `mu`
 - How many aluminum alloys were tested? How do you know?
+  - One - all rows have "al_24st" listed as the alloy
 - What angles were tested?
+  - 0, 45, 90
 - What thicknesses were tested?
-- (Write your own question here)
-- No; we see a variety of values for `E` and `mu`.
-- Just one alloy: al_24st
-- Angles: 0, 45, 90 (degrees)
-- Thicknesses: 0.022, 0.032, 0.064, 0.081 (in)
-- I'm curious if the properties `E, mu` vary with thickness
+  - 0.022, 0.032, 0.064, 0.081
+  
+Other questions
+- What's the relationship across thickness, `E`, and `mu`?
+- What's the relationship across angle, `E`, and `mu`?
+- Are there relationships across the data in the dataset? Are we missing data?
 
 ## Visualize
 <!-- ------------------------- -->
 
 __q3__ Create a visualization to investigate your question from q1 above. Can you find an answer to your question using the dataset? Would you need additional information to answer your question?
 
-```{r q3-task}
-## TASK: Investigate your question from q1 here
+```{r q3-task-plot-1A}
+df_stang_long %>%
+  ggplot() +
+  geom_boxplot(aes(y = E, x = thick, group = thick)) +
+  coord_flip() +
+  labs(title = "E by thickness", x = "thickness (in)")
 ```
 
 **Observations**:
 
-- (Address your question from q1 here)
+- Overall, there is an inverse relationship between thickness and E - as E increases, thickness decreases
+  - However, this relationship is not supported by the data when `thick = 0.064` as the median E is greater than that of `thick = 0.032`
+
+```{r q3-task-plot-1B}
+df_stang_long %>%
+  ggplot() +
+  geom_boxplot(aes(y = E, x = thick, group = thick)) +
+  facet_grid(~ angle ~ .) +
+  coord_flip() +
+  labs(title = "E by thickness (facet by angle) ", x = "thickness (in)")
+```
+
+**Observations**:
+
+- Looking into the data more closely (i.e. by angle), the relationship between E and thickness becomes more questionable as the inverse relationship is supported by data when `angle = 45` but not when `angle = 0`
+- However, E for `thick = 0.022` seem consistent across all three angles
+- E for `thick = 0.081` also somewhat consistent across all three angles
+  - Range of medians (and values in general) is much wider for `thick = 0.081` than `thick = 0.022` but is still distinct from other thicknesses
+
+```{r q3-task-plot-2A}
+df_stang_long %>%
+  ggplot() +
+  geom_boxplot(aes(y = mu, x = thick, group = thick)) +
+  coord_flip() +
+  labs(title = "mu by thickness", x = "thickness (in)")
+```
+
+**Observations**:
+
+- Greatest median is for `thick = 0.064`
+- Median for `thick = 0.022` is skewed lower due to an outlier
+
+```{r q3-task-plot-2B}
+df_stang_long %>%
+  ggplot() +
+  geom_boxplot(aes(y = mu, x = thick, group = thick)) +
+  facet_grid(~ angle ~ .) +
+  coord_flip() +
+  labs(title = "mu by thickness (facet by angle) ", x = "thickness (in)")
+```
+
+**Observations**:
+
+- Unlike E, mu data seems more chaotic and doesn't seem to show a relationship between thickness and mu in general or by angle
+- Across the angles, there aren't obvious patterns
+- The lowest thickness (`thick = 0.022`) has the widest range of mu values 
 
 __q4__ Consider the following statement:
 
@@ -153,6 +216,7 @@ df_stang_long %>%
 **Observations**:
 
 - Does this graph support or contradict the claim above?
+  - The graph contradicts the claim that elasticity (`E`) is an intensive material property as there seems to be a cluster of `thick = 0.081` datapoints around the 10,000 mark for `E` that are separate from `E` values for other thicknesses
 
 # References
 <!-- -------------------------------------------------- -->
