@@ -68,14 +68,14 @@ for more information.
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
     ## ✓ tibble  3.0.1     ✓ dplyr   1.0.0
     ## ✓ tidyr   1.1.0     ✓ stringr 1.4.0
     ## ✓ readr   1.3.1     ✓ forcats 0.5.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -288,15 +288,16 @@ df_stang_long %>%
   geom_boxplot(aes(y = E, x = thick, group = thick)) +
   geom_hline(yintercept = 10125, color = "blue", linetype = "dashed") +
   coord_flip() +
-  labs(title = "Elastic Modulus by Thickness", x = "thickness (in)", y = "Elastic Modulus (E)")
+  labs(title = "Modulus of Elasticity by Thickness", x = "thickness (in)", y = "Modulus of Elasticity (E)")
 ```
 
 ![](c03-stang-assignment_files/figure-gfm/q3-task-plot-1A-1.png)<!-- -->
 
 **Observations**:
 
-  - Overall, there is an inverse relationship between thickness and E
-    though the relationship is not linear across the thicknesses tested
+  - Overall, there is an inverse relationship between thickness and
+    Young’s modulus (E) though the relationship is not linear across the
+    thicknesses tested
       - When `thick = 0.064`, the median E is greater than that of
         `thick = 0.032`
       - `0.081` has the lowest E while E \> 10,125 for all other
@@ -309,9 +310,9 @@ df_stang_long %>%
   ggplot() +
   geom_boxplot(aes(y = E, x = thick, group = thick)) +
   geom_hline(yintercept = 10125, color = "blue", linetype = "dashed") +
-  facet_grid(~ angle ~ .) +
+  facet_grid(angle ~ ., labeller = label_both) +
   coord_flip() +
-  labs(title = "Elastic Modulus by Thickness (facet by angle)", x = "thickness (in)", y = "Elastic Modulus (E)")
+  labs(title = "Modulus of Elasticity by Thickness (facet by angle)", x = "thickness (in)", y = "Modulus of Elasticity (E)")
 ```
 
 ![](c03-stang-assignment_files/figure-gfm/q3-task-plot-1B-1.png)<!-- -->
@@ -336,7 +337,7 @@ df_stang_long %>%
   geom_boxplot(aes(y = mu, x = thick, group = thick)) +
   geom_hline(yintercept = 0.31625, color = "blue", linetype = "dashed") +
   coord_flip() +
-  labs(title = "Shear Modulus by Thickness", x = "thickness (in)", y = "Sheer Modulus (mu)")
+  labs(title = "Poisson's ratio by Thickness", x = "thickness (in)", y = "Poisson's ratio (mu)")
 ```
 
 ![](c03-stang-assignment_files/figure-gfm/q3-task-plot-2A-1.png)<!-- -->
@@ -353,22 +354,25 @@ df_stang_long %>%
   ggplot() +
   geom_boxplot(aes(y = mu, x = thick, group = thick)) +
   geom_hline(yintercept = 0.31625, color = "blue", linetype = "dashed") +
-  facet_grid(~ angle ~ .) +
+  facet_grid(angle ~ ., labeller = label_both) +
   coord_flip() +
-  labs(title = "Sheer Modulus by Thickness (facet by angle)", x = "thickness (in)", y = "Sheer Modulus (mu)")
+  labs(title = "Poisson's ratio by Thickness (facet by angle)", x = "thickness (in)", y = "Poisson's ratio (mu)")
 ```
 
 ![](c03-stang-assignment_files/figure-gfm/q3-task-plot-2B-1.png)<!-- -->
 
 **Observations**:
 
-  - Across all angles, the median sheer modulus (`mu`) is less than
+  - Across all angles, the median Poisson’s ratio (`mu`) is less than
     0.31625 (the dotted blue line) for `thick = 0.081` and is the lowest
     value across all thicknesses
   - All `mu` values less than 0.31625 are associated with `thick
     = 0.081`
-  - The lowest thickness (`thick = 0.022`) has the widest range of mu
+  - The lowest thickness (`thick = 0.022`) has the widest range of `mu`
     values
+  - There is a general pattern across thicknesses where Poisson’s ratio
+    increases between 0 degrees and 45 degrees but decreases between 45
+    degrees and 90 degrees
 
 **q4** Consider the following statement:
 
@@ -395,7 +399,7 @@ df_stang_long %>%
 **Observations**:
 
   - Does this graph support or contradict the claim above?
-      - The graph contradicts the claim that elasticity (`E`) is an
+      - The graph contradicts the claim that Young’s modulus (`E`) is an
         intensive material property as there seems to be a cluster of
         `thick = 0.081` datapoints around the 10,000 mark for `E` that
         are separate from `E` values for other thicknesses
