@@ -1,7 +1,7 @@
 ---
 title: "Gapminder"
-author: "(Your name here)"
-date: 2020-
+author: "Jen Wei"
+date: 2020-07-24
 output:
   github_document:
     toc: true
@@ -56,19 +56,23 @@ __q0__ Perform your "first checks" on the dataset. What variables are in this
 dataset?
 
 ```{r q0-task}
-## TASK: Do your "first checks" here!
+glimpse(gapminder)
+summary(gapminder)
 ```
 
 **Observations**:
 
-- Write the variable names here
+- The variables in the dataset include `country`, `continent`, `year`, `lifeExp`, `pop`, and `gdpPercap`
 
 __q1__ Determine the most and least recent years in the `gapminder` dataset.
 
 ```{r q1-task}
 ## TASK: Find the largest and smallest values of `year` in `gapminder`
-year_max <- NA_real_
-year_min <- NA_real_
+year_max <- max(select(gapminder, year))
+year_min <- min(select(gapminder, year))
+
+year_max
+year_min
 ```
 
 Use the following test to check your work.
@@ -87,40 +91,86 @@ __q2__ Filter on years matching `year_min`, and make a plot of the GDE per capit
 You may encounter difficulties in visualizing these data; if so document your challenges and attempt to produce the most informative visual you can.
 
 ```{r q2-task}
-## TASK: Create a visual of gdpPercap vs continent
+year_min_df <- filter(gapminder, year == year_min)
+glimpse(year_min_df)
+
+year_min_df %>%
+  ggplot(mapping = aes(y = gdpPercap, x = continent)) +
+  geom_boxplot() +
+  labs(title = "GDP per capita by continent in 1952") +
+  coord_flip() +
+  scale_y_log10()
 ```
 
 **Observations**:
 
-- Write your observations here
+- Asia has the largest range of GDP per capita
+- Oceania has the smallest range of GDP per capita
+- Asia has the country with the largest GDP per capita (though it's an outlier)
+  - Excluding the outliers, Europe has the country with the largest GDP per capita
+- Africa has the country with the lowest GDP per capita
+- Oceania has the largest median GDP per capita
+- Africa has the smallest median GDP per capita
+- There are three outliers identified in the dataset - two in Americas and one in Asia
 
 **Difficulties & Approaches**:
 
-- Write your challenges and your approach to solving them
+- For visualizing `gdpPercap` vs `continent`, I first tried a column plot, but it was a bit noisy (as there seemed to be a line per row in the filtered dataset), and the main takeaway from it was the total count per continent. Then, I decided to use a boxplot to see trends within each `continent`. This worked better, but the spread of data across countries and continents made certain boxplots squished. To stretch them out a bit, I applied `coord_flip()`, but it was still squished, so I log-scaled `gdpPercap`.
 
 __q3__ You should have found at least three outliers in q2. Identify those outliers (figure out which countries they are).
 
-*Note*: I realize the reasons for
-
 ```{r q3-task}
-## TASK: Identify the outliers from q2
+americas_outliers_df <- filter(year_min_df, gdpPercap > 1.000e+04, continent == 'Americas')
+glimpse(americas_outliers_df)
+
+asia_outliers_df <- filter(year_min_df, gdpPercap > 1.000e+05, continent == 'Asia')
+glimpse(asia_outliers_df)
+
 ```
 
 **Observations**:
 
-- Identify the outlier countries from q2
+I initially thought of using the plot to identify the outliers via [this StackOverflow post](https://stackoverflow.com/questions/33524669/labeling-outliers-of-boxplots-in-r), but then I realized I could just filter the data based on data gleaned from the q2 plot of GDP per capita by continent in 1952.
+
+- The outliers are Canada, United States, and Kuwait
+
+NOTE: I probably could've just swapped x and y instead of using `coord_flip()`, but alas
 
 __q4__ Create a plot similar to yours from q2 studying both `year_min` and `year_max`. Find a way to highlight the outliers from q3 on your plot. Compare the patterns between `year_min` and `year_max`.
 
 *Hint*: We've learned a lot of different ways to show multiple variables; think about using different aesthetics or facets.
 
 ```{r q4-task}
-## TASK: Create a visual of gdpPercap vs continent
+year_extremes_df <- filter(gapminder, year == year_min | year == year_max)
+glimpse(year_extremes_df)
+
+year_extremes_df %>%
+  ggplot(mapping = aes(x = gdpPercap, y = continent, color = factor(year))) +
+  geom_boxplot() +
+  facet_grid(year ~ .) +
+  stat_summary(
+    fun = median,
+    geom = "line",
+    aes(group = year, color = factor(year)),
+    lwd = 1,
+    position = position_dodge(width = .75)
+  ) +
+  scale_x_log10() +
+  labs(title = "GDP per capita by continent")
+
 ```
 
 **Observations**:
-
-- Write your observations here
+- GDP per capita by continent (from highest to lowest) is the same for the earliest and latest years
+  - Oceania, Europe, Americas, Asia, Africa
+- The spread of GDP per capita across countries for each continent has increased between 1952 and 2007
+- Both years have three outliers
+  - 2007 outliers are all in Americas: Haiti, Canada, and United States
+  
+``` {r q4-task-outliers}
+americas_latest_outliers_df <- filter(year_extremes_df, gdpPercap > 2.000e+04 | gdpPercap < 2.500e+03 , continent == 'Americas', year == 2007)
+glimpse(americas_latest_outliers_df)
+```
 
 # Your Own EDA
 <!-- -------------------------------------------------- -->
