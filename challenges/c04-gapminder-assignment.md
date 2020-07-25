@@ -471,16 +471,18 @@ Looking at the extremes of each continent in 1952, the smallest
 populated countries in Africa and the Americas had lower GDP per capita
 than that of the largest populated countries, while in Asia, Europe, and
 Oceania, the opposite is true where the smallest populated countries had
-higher GDP per capita than that of the largest populated countries. - In
-Africa, the smallest populated country had a *lower* GDP per capita than
-that of the largest populated country - In Americas, the smallest
-populated country had a *lower* GDP per capita than that of the largest
-populated country - In Asia, the smallest populated country had a
-*higher* GDP per capita than that of the largest populated country - In
-Europe, the smallest populated country had a *higher* GDP per capita
-than that of the largest populated country - In Oceania, the smallest
-populated country had a *higher* GDP per capita than that of the largest
-populated country
+higher GDP per capita than that of the largest populated countries.
+
+  - In Africa, the smallest populated country had a *lower* GDP per
+    capita than that of the largest populated country
+  - In Americas, the smallest populated country had a *lower* GDP per
+    capita than that of the largest populated country
+  - In Asia, the smallest populated country had a *higher* GDP per
+    capita than that of the largest populated country
+  - In Europe, the smallest populated country had a *higher* GDP per
+    capita than that of the largest populated country
+  - In Oceania, the smallest populated country had a *higher* GDP per
+    capita than that of the largest populated country
 
 Looking at the extremes of each continent in 2006, all countries had the
 same relations between the extremes aside from Oceania, where the
