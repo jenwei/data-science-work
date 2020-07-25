@@ -353,6 +353,31 @@ the relationship between variables, or something else entirely.
 **q5** Create *at least* three new figures below. With each figure, try
 to pose new questions about the data.
 
+While going through EDA for GDP per capita, I was curious about how
+other variables impact GDP per capita, so first, I’ll look into
+population.
+
+``` r
+gapminder %>%
+  ggplot(mapping = aes(x = pop, y = gdpPercap, color = year)) +
+  geom_point() +
+  facet_wrap(~ continent, nrow = 5) +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(title = "GDP per capita by population per continent")
+```
+
+![](c04-gapminder-assignment_files/figure-gfm/q5-task1-1.png)<!-- -->
+
+**Observations:** - Seems like there are some groupings within the data
+that show a linear, positive trend - Over time, both population and GDP
+per capita increased for Oceania - There are two distinct groups, one
+for each Oceanian country (New Zealand and Australia)
+
+There’s a lot of data to digest here, so similar to the guided EDA, I’ll
+now focus on the earliest and latest years, 1952 and 2007 and try to
+familiarize myself with just population.
+
 ``` r
 year_extremes_df %>%
   ggplot(mapping = aes(y = pop, x = continent, color = factor(year))) +
@@ -366,25 +391,104 @@ year_extremes_df %>%
     position = position_dodge(width = .75)
   ) +
   scale_y_log10() +
-  labs(title = "Population by continent")
+  labs(title = "Population by continent for the year-extremes")
 ```
 
-![](c04-gapminder-assignment_files/figure-gfm/q5-task1-1.png)<!-- -->
-
-While going through EDA for GDP per capita, I was curious about how
-population might impact GDP, so first, I thought I’d take a look at
-population by continent for the earliest and latest years, 1952 and
-2007.
+![](c04-gapminder-assignment_files/figure-gfm/q5-task2-1.png)<!-- -->
 
 **Observations:**
 
-  - 
-<!-- end list -->
+  - The median population size increased for all continents between 1952
+    and 2007
+  - The largest median population size is associated with Asia in both
+    years
+  - There is only one outlier in 2007 compared to three in 1952
+  - The median population sizes for Africa, Americas, Europe, and
+    Oceania look similar on the log scale (or at least less distinct)
+    for 2007 compared to 1952
+
+The insights from the plot are expected as the world population is
+consistently growing, and this served as a helpful check to ensure there
+aren’t any abnormalities before looking at population AND GDP per
+capita.
 
 ``` r
-## TASK: Your second graph
+# Needed for geom_label_repel
+library(ggrepel)
+
+year_extremes_min_max_df <-
+  year_extremes_df %>%
+  group_by(continent, year) %>%
+  filter(pop == min(pop) | pop == max(pop))
+
+year_extremes_min_max_df
 ```
 
+    ## # A tibble: 20 x 6
+    ## # Groups:   continent, year [10]
+    ##    country               continent  year lifeExp        pop gdpPercap
+    ##    <fct>                 <fct>     <int>   <dbl>      <int>     <dbl>
+    ##  1 Australia             Oceania    1952    69.1    8691212    10040.
+    ##  2 Australia             Oceania    2007    81.2   20434176    34435.
+    ##  3 Bahrain               Asia       1952    50.9     120447     9867.
+    ##  4 Bahrain               Asia       2007    75.6     708573    29796.
+    ##  5 China                 Asia       1952    44    556263527      400.
+    ##  6 China                 Asia       2007    73.0 1318683096     4959.
+    ##  7 Germany               Europe     1952    67.5   69145952     7144.
+    ##  8 Germany               Europe     2007    79.4   82400996    32170.
+    ##  9 Iceland               Europe     1952    72.5     147962     7268.
+    ## 10 Iceland               Europe     2007    81.8     301931    36181.
+    ## 11 New Zealand           Oceania    1952    69.4    1994794    10557.
+    ## 12 New Zealand           Oceania    2007    80.2    4115771    25185.
+    ## 13 Nigeria               Africa     1952    36.3   33119096     1077.
+    ## 14 Nigeria               Africa     2007    46.9  135031164     2014.
+    ## 15 Sao Tome and Principe Africa     1952    46.5      60011      880.
+    ## 16 Sao Tome and Principe Africa     2007    65.5     199579     1598.
+    ## 17 Trinidad and Tobago   Americas   1952    59.1     662850     3023.
+    ## 18 Trinidad and Tobago   Americas   2007    69.8    1056608    18009.
+    ## 19 United States         Americas   1952    68.4  157553000    13990.
+    ## 20 United States         Americas   2007    78.2  301139947    42952.
+
 ``` r
-## TASK: Your third graph
+year_extremes_df %>%
+  ggplot(mapping = aes(x = pop, y = gdpPercap, color = continent)) +
+  geom_point() +
+  geom_label_repel(
+    data = year_extremes_min_max_df,
+    aes(label = gdpPercap)
+  ) +
+  facet_grid(~ year ~ .) +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(title = "GDP per capita by population per continent for the year-extremes")
 ```
+
+![](c04-gapminder-assignment_files/figure-gfm/q5-task3-1.png)<!-- -->
+
+**Observations:**
+
+Looking at the extremes of each continent in 1952, the smallest
+populated countries in Africa and the Americas had lower GDP per capita
+than that of the largest populated countries, while in Asia, Europe, and
+Oceania, the opposite is true where the smallest populated countries had
+higher GDP per capita than that of the largest populated countries. - In
+Africa, the smallest populated country had a *lower* GDP per capita than
+that of the largest populated country - In Americas, the smallest
+populated country had a *lower* GDP per capita than that of the largest
+populated country - In Asia, the smallest populated country had a
+*higher* GDP per capita than that of the largest populated country - In
+Europe, the smallest populated country had a *higher* GDP per capita
+than that of the largest populated country - In Oceania, the smallest
+populated country had a *higher* GDP per capita than that of the largest
+populated country
+
+Looking at the extremes of each continent in 2006, all countries had the
+same relations between the extremes aside from Oceania, where the
+smallest populated country had a *lower* GDP per capita than that of the
+largest populated country (which is different from 1952).
+
+Both generally and by continent, there is no linear relationship between
+population and GDP per capita. This is not totally unexpected though as
+each point is a country, and each country has its own economy, and there
+are other factors not represented in the dataset that likely more
+directly and more greatly influenced GDP per capita.

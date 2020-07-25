@@ -222,6 +222,9 @@ year_extremes_df %>%
 The insights from the plot are expected as the world population is consistently growing, and this served as a helpful check to ensure there aren't any abnormalities before looking at population AND GDP per capita.
 
 ```{r q5-task3}
+# Needed for geom_label_repel
+library(ggrepel)
+
 year_extremes_min_max_df <-
   year_extremes_df %>%
   group_by(continent, year) %>%
@@ -244,14 +247,13 @@ year_extremes_df %>%
 
 **Observations:**
 
-- Looking at the extremes of each continent in 1952 . . .
-  - in Africa, the smallest populated country had a *lower* GDP per capita than that of the largest populated country 
-  - in Americas, the smallest populated country had a *lower* GDP per capita than that of the largest populated country
-  - in Asia, the smallest populated country had a *greater* GDP per capita than that of the largest populated country
-  - in Europe, the smallest populated country had a *higher* GDP per capita than that of the largest populated country
-  - in Oceania, the smallest populated country had a *higher* GDP per capita than that of the largest populated country
-- Looking at the extremes of each continent in 2007 . . .
-  - all countries had the same relations between the extremes aside from Oceania, where the smallest populated country had a *lower* GDP per capita than that of the largest populated country (which is different from 1952)
+Looking at the extremes of each continent in 1952, the smallest populated countries in Africa and the Americas had lower GDP per capita than that of the largest populated countries, while in Asia, Europe, and Oceania, the opposite is true where the smallest populated countries had higher GDP per capita than that of the largest populated countries.
+  - In Africa, the smallest populated country had a *lower* GDP per capita than that of the largest populated country 
+  - In Americas, the smallest populated country had a *lower* GDP per capita than that of the largest populated country
+  - In Asia, the smallest populated country had a *higher* GDP per capita than that of the largest populated country
+  - In Europe, the smallest populated country had a *higher* GDP per capita than that of the largest populated country
+  - In Oceania, the smallest populated country had a *higher* GDP per capita than that of the largest populated country
 
-- Both generally and by continent, there is no linear relationship between population and GDP per capita
-  - This is not totally unexpected though as each point is a country, and each country has its own economy
+Looking at the extremes of each continent in 2006, all countries had the same relations between the extremes aside from Oceania, where the smallest populated country had a *lower* GDP per capita than that of the largest populated country (which is different from 1952).
+
+Both generally and by continent, there is no linear relationship between population and GDP per capita. This is not totally unexpected though as each point is a country, and each country has its own economy, and there are other factors not represented in the dataset that likely more directly and more greatly influenced GDP per capita.
