@@ -98,7 +98,6 @@ year_min_df %>%
   ggplot(mapping = aes(y = gdpPercap, x = continent)) +
   geom_boxplot() +
   labs(title = "GDP per capita by continent in 1952") +
-  coord_flip() +
   scale_y_log10()
 ```
 
@@ -115,7 +114,7 @@ year_min_df %>%
 
 **Difficulties & Approaches**:
 
-- For visualizing `gdpPercap` vs `continent`, I first tried a column plot, but it was a bit noisy (as there seemed to be a line per row in the filtered dataset), and the main takeaway from it was the total count per continent. Then, I decided to use a boxplot to see trends within each `continent`. This worked better, but the spread of data across countries and continents made certain boxplots squished. To stretch them out a bit, I applied `coord_flip()`, but it was still squished, so I log-scaled `gdpPercap`.
+- For visualizing `gdpPercap` vs `continent`, I first tried a column plot, but it was a bit noisy (as there seemed to be a line per row in the filtered dataset), and the main takeaway from it was the total count per continent. Then, I decided to use a boxplot to see trends within each `continent`. This worked better, but the spread of data across countries and continents made certain boxplots squished. To stretch them out a bit, I log-scaled `gdpPercap`.
 
 __q3__ You should have found at least three outliers in q2. Identify those outliers (figure out which countries they are).
 
@@ -125,7 +124,6 @@ glimpse(americas_outliers_df)
 
 asia_outliers_df <- filter(year_min_df, gdpPercap > 1.000e+05, continent == 'Asia')
 glimpse(asia_outliers_df)
-
 ```
 
 **Observations**:
@@ -145,9 +143,9 @@ year_extremes_df <- filter(gapminder, year == year_min | year == year_max)
 glimpse(year_extremes_df)
 
 year_extremes_df %>%
-  ggplot(mapping = aes(x = gdpPercap, y = continent, color = factor(year))) +
+  ggplot(mapping = aes(y = gdpPercap, x = continent, color = factor(year))) +
   geom_boxplot() +
-  facet_grid(year ~ .) +
+  facet_grid(~ year) +
   stat_summary(
     fun = median,
     geom = "line",
@@ -155,9 +153,8 @@ year_extremes_df %>%
     lwd = 1,
     position = position_dodge(width = .75)
   ) +
-  scale_x_log10() +
+  scale_y_log10() +
   labs(title = "GDP per capita by continent")
-
 ```
 
 **Observations**:
@@ -179,17 +176,82 @@ Now it's your turn! We just went through guided EDA considering the GDP per capi
 
 __q5__ Create *at least* three new figures below. With each figure, try to pose new questions about the data.
 
+While going through EDA for GDP per capita, I was curious about how other variables impact GDP per capita, so first, I'll look into population.
+
 ```{r q5-task1}
-## TASK: Your first graph
+gapminder %>%
+  ggplot(mapping = aes(x = pop, y = gdpPercap, color = year)) +
+  geom_point() +
+  facet_wrap(~ continent, nrow = 5) +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(title = "GDP per capita by population per continent")
 ```
 
+**Observations:**
+- Seems like there are some groupings within the data that show a linear, positive trend
+  - Over time, both population and GDP per capita increased for Oceania
+    - There are two distinct groups, one for each Oceanian country (New Zealand and Australia)
+
+There's a lot of data to digest here, so similar to the guided EDA, I'll now focus on the earliest and latest years, 1952 and 2007 and try to familiarize myself with just population.
 
 ```{r q5-task2}
-## TASK: Your second graph
+year_extremes_df %>%
+  ggplot(mapping = aes(y = pop, x = continent, color = factor(year))) +
+  geom_boxplot() +
+  facet_grid(~ year) +
+  stat_summary(
+    fun = median,
+    geom = "line",
+    aes(group = year, color = factor(year)),
+    lwd = 1,
+    position = position_dodge(width = .75)
+  ) +
+  scale_y_log10() +
+  labs(title = "Population by continent for the year-extremes")
+
 ```
 
+**Observations:**
+
+- The median population size increased for all continents between 1952 and 2007
+- The largest median population size is associated with Asia in both years
+- There is only one outlier in 2007 compared to three in 1952
+- The median population sizes for Africa, Americas, Europe, and Oceania look similar on the log scale (or at least less distinct) for 2007 compared to 1952
+
+The insights from the plot are expected as the world population is consistently growing, and this served as a helpful check to ensure there aren't any abnormalities before looking at population AND GDP per capita.
 
 ```{r q5-task3}
-## TASK: Your third graph
+year_extremes_min_max_df <-
+  year_extremes_df %>%
+  group_by(continent, year) %>%
+  filter(pop == min(pop) | pop == max(pop))
+
+year_extremes_min_max_df
+
+year_extremes_df %>%
+  ggplot(mapping = aes(x = pop, y = gdpPercap, color = continent)) +
+  geom_point() +
+  geom_label_repel(
+    data = year_extremes_min_max_df,
+    aes(label = gdpPercap)
+  ) +
+  facet_grid(~ year ~ .) +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(title = "GDP per capita by population per continent for the year-extremes")
 ```
 
+**Observations:**
+
+- Looking at the extremes of each continent in 1952 . . .
+  - in Africa, the smallest populated country had a *lower* GDP per capita than that of the largest populated country 
+  - in Americas, the smallest populated country had a *lower* GDP per capita than that of the largest populated country
+  - in Asia, the smallest populated country had a *greater* GDP per capita than that of the largest populated country
+  - in Europe, the smallest populated country had a *higher* GDP per capita than that of the largest populated country
+  - in Oceania, the smallest populated country had a *higher* GDP per capita than that of the largest populated country
+- Looking at the extremes of each continent in 2007 . . .
+  - all countries had the same relations between the extremes aside from Oceania, where the smallest populated country had a *lower* GDP per capita than that of the largest populated country (which is different from 1952)
+
+- Both generally and by continent, there is no linear relationship between population and GDP per capita
+  - This is not totally unexpected though as each point is a country, and each country has its own economy

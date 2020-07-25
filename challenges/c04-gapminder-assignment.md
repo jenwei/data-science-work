@@ -190,7 +190,6 @@ your challenges and attempt to produce the most informative visual you
 can.
 
 ``` r
-## TASK: Create a visual of gdpPercap vs continent
 year_min_df <- filter(gapminder, year == year_min)
 glimpse(year_min_df)
 ```
@@ -209,7 +208,6 @@ year_min_df %>%
   ggplot(mapping = aes(y = gdpPercap, x = continent)) +
   geom_boxplot() +
   labs(title = "GDP per capita by continent in 1952") +
-  coord_flip() +
   scale_y_log10()
 ```
 
@@ -237,18 +235,51 @@ year_min_df %>%
     total count per continent. Then, I decided to use a boxplot to see
     trends within each `continent`. This worked better, but the spread
     of data across countries and continents made certain boxplots
-    squished. To stretch them out a bit, I applied `coord_flip()`, but
-    it was still squished, so I log-scaled `gdpPercap`.
+    squished. To stretch them out a bit, I log-scaled `gdpPercap`.
 
 **q3** You should have found at least three outliers in q2. Identify
 those outliers (figure out which countries they are).
+
+``` r
+americas_outliers_df <- filter(year_min_df, gdpPercap > 1.000e+04, continent == 'Americas')
+glimpse(americas_outliers_df)
+```
+
+    ## Rows: 2
+    ## Columns: 6
+    ## $ country   <fct> Canada, United States
+    ## $ continent <fct> Americas, Americas
+    ## $ year      <int> 1952, 1952
+    ## $ lifeExp   <dbl> 68.75, 68.44
+    ## $ pop       <int> 14785584, 157553000
+    ## $ gdpPercap <dbl> 11367.16, 13990.48
+
+``` r
+asia_outliers_df <- filter(year_min_df, gdpPercap > 1.000e+05, continent == 'Asia')
+glimpse(asia_outliers_df)
+```
+
+    ## Rows: 1
+    ## Columns: 6
+    ## $ country   <fct> Kuwait
+    ## $ continent <fct> Asia
+    ## $ year      <int> 1952
+    ## $ lifeExp   <dbl> 55.565
+    ## $ pop       <int> 160000
+    ## $ gdpPercap <dbl> 108382.4
 
 **Observations**:
 
 I initially thought of using the plot to identify the outliers via [this
 StackOverflow
 post](https://stackoverflow.com/questions/33524669/labeling-outliers-of-boxplots-in-r),
-but then I realized I could just filter the data based on the q2 plot.
+but then I realized I could just filter the data based on data gleaned
+from the q2 plot of GDP per capita by continent in 1952.
+
+  - The outliers are Canada, United States, and Kuwait
+
+NOTE: I probably could’ve just swapped x and y instead of using
+`coord_flip()`, but alas
 
 **q4** Create a plot similar to yours from q2 studying both `year_min`
 and `year_max`. Find a way to highlight the outliers from q3 on your
@@ -258,12 +289,57 @@ plot. Compare the patterns between `year_min` and `year_max`.
 variables; think about using different aesthetics or facets.
 
 ``` r
-## TASK: Create a visual of gdpPercap vs continent
+year_extremes_df <- filter(gapminder, year == year_min | year == year_max)
+glimpse(year_extremes_df)
 ```
 
-**Observations**:
+    ## Rows: 284
+    ## Columns: 6
+    ## $ country   <fct> Afghanistan, Afghanistan, Albania, Albania, Algeria, Algeri…
+    ## $ continent <fct> Asia, Asia, Europe, Europe, Africa, Africa, Africa, Africa,…
+    ## $ year      <int> 1952, 2007, 1952, 2007, 1952, 2007, 1952, 2007, 1952, 2007,…
+    ## $ lifeExp   <dbl> 28.801, 43.828, 55.230, 76.423, 43.077, 72.301, 30.015, 42.…
+    ## $ pop       <int> 8425333, 31889923, 1282697, 3600523, 9279525, 33333216, 423…
+    ## $ gdpPercap <dbl> 779.4453, 974.5803, 1601.0561, 5937.0295, 2449.0082, 6223.3…
 
-  - Write your observations here
+``` r
+year_extremes_df %>%
+  ggplot(mapping = aes(y = gdpPercap, x = continent, color = factor(year))) +
+  geom_boxplot() +
+  facet_grid(~ year) +
+  stat_summary(
+    fun = median,
+    geom = "line",
+    aes(group = year, color = factor(year)),
+    lwd = 1,
+    position = position_dodge(width = .75)
+  ) +
+  scale_y_log10() +
+  labs(title = "GDP per capita by continent")
+```
+
+![](c04-gapminder-assignment_files/figure-gfm/q4-task-1.png)<!-- -->
+
+**Observations**: - GDP per capita by continent (from highest to lowest)
+is the same for the earliest and latest years - Oceania, Europe,
+Americas, Asia, Africa - The spread of GDP per capita across countries
+for each continent has increased between 1952 and 2007 - Both years have
+three outliers - 2007 outliers are all in Americas: Haiti, Canada, and
+United States
+
+``` r
+americas_latest_outliers_df <- filter(year_extremes_df, gdpPercap > 2.000e+04 | gdpPercap < 2.500e+03 , continent == 'Americas', year == 2007)
+glimpse(americas_latest_outliers_df)
+```
+
+    ## Rows: 3
+    ## Columns: 6
+    ## $ country   <fct> Canada, Haiti, United States
+    ## $ continent <fct> Americas, Americas, Americas
+    ## $ year      <int> 2007, 2007, 2007
+    ## $ lifeExp   <dbl> 80.653, 60.916, 78.242
+    ## $ pop       <int> 33390141, 8502814, 301139947
+    ## $ gdpPercap <dbl> 36319.235, 1201.637, 42951.653
 
 # Your Own EDA
 
@@ -278,8 +354,32 @@ the relationship between variables, or something else entirely.
 to pose new questions about the data.
 
 ``` r
-## TASK: Your first graph
+year_extremes_df %>%
+  ggplot(mapping = aes(y = pop, x = continent, color = factor(year))) +
+  geom_boxplot() +
+  facet_grid(~ year) +
+  stat_summary(
+    fun = median,
+    geom = "line",
+    aes(group = year, color = factor(year)),
+    lwd = 1,
+    position = position_dodge(width = .75)
+  ) +
+  scale_y_log10() +
+  labs(title = "Population by continent")
 ```
+
+![](c04-gapminder-assignment_files/figure-gfm/q5-task1-1.png)<!-- -->
+
+While going through EDA for GDP per capita, I was curious about how
+population might impact GDP, so first, I thought I’d take a look at
+population by continent for the earliest and latest years, 1952 and
+2007.
+
+**Observations:**
+
+  - 
+<!-- end list -->
 
 ``` r
 ## TASK: Your second graph
