@@ -484,7 +484,7 @@ higher GDP per capita than that of the largest populated countries.
   - In Oceania, the smallest populated country had a *higher* GDP per
     capita than that of the largest populated country
 
-Looking at the extremes of each continent in 2006, all countries had the
+Looking at the extremes of each continent in 2007, all countries had the
 same relations between the extremes aside from Oceania, where the
 smallest populated country had a *lower* GDP per capita than that of the
 largest populated country (which is different from 1952).
