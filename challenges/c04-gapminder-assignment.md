@@ -59,14 +59,14 @@ for more information.
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ───────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
     ## ✓ tibble  3.0.1     ✓ dplyr   1.0.0
     ## ✓ tidyr   1.1.0     ✓ stringr 1.4.0
     ## ✓ readr   1.3.1     ✓ forcats 0.5.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -273,13 +273,13 @@ glimpse(asia_outliers_df)
 I initially thought of using the plot to identify the outliers via [this
 StackOverflow
 post](https://stackoverflow.com/questions/33524669/labeling-outliers-of-boxplots-in-r),
-but then I realized I could just filter the data based on data gleaned
-from the q2 plot of GDP per capita by continent in 1952.
+but then I realized I could just filter the data based on info from the
+q2 plot of GDP per capita by continent in 1952.
 
   - The outliers are Canada, United States, and Kuwait
 
-NOTE: I probably could’ve just swapped x and y instead of using
-`coord_flip()`, but alas
+NOTE: This was done manually and could’ve been done in a smarter way,
+but it works?
 
 **q4** Create a plot similar to yours from q2 studying both `year_min`
 and `year_max`. Find a way to highlight the outliers from q3 on your

@@ -128,11 +128,11 @@ glimpse(asia_outliers_df)
 
 **Observations**:
 
-I initially thought of using the plot to identify the outliers via [this StackOverflow post](https://stackoverflow.com/questions/33524669/labeling-outliers-of-boxplots-in-r), but then I realized I could just filter the data based on data gleaned from the q2 plot of GDP per capita by continent in 1952.
+I initially thought of using the plot to identify the outliers via [this StackOverflow post](https://stackoverflow.com/questions/33524669/labeling-outliers-of-boxplots-in-r), but then I realized I could just filter the data based on info from the q2 plot of GDP per capita by continent in 1952.
 
 - The outliers are Canada, United States, and Kuwait
 
-NOTE: I probably could've just swapped x and y instead of using `coord_flip()`, but alas
+NOTE: This was done manually and could've been done in a smarter way, but it works?
 
 __q4__ Create a plot similar to yours from q2 studying both `year_min` and `year_max`. Find a way to highlight the outliers from q3 on your plot. Compare the patterns between `year_min` and `year_max`.
 
