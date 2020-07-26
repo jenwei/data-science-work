@@ -185,7 +185,7 @@ gapminder %>%
   facet_wrap(~ continent, nrow = 5) +
   scale_x_log10() +
   scale_y_log10() +
-  labs(title = "GDP per capita by population per continent")
+  labs(title = "GDP per capita by population per continent over time")
 ```
 
 **Observations:**
@@ -242,7 +242,7 @@ year_extremes_df %>%
   facet_grid(~ year ~ .) +
   scale_x_log10() +
   scale_y_log10() +
-  labs(title = "GDP per capita by population per continent for the year-extremes")
+  labs(title = "GDP per capita by population per continent for 1952 and 2007 (with first and last population counts annotated)")
 ```
 
 **Observations:**
@@ -258,3 +258,30 @@ Looking at the extremes of each continent in 1952, the smallest populated countr
 Looking at the extremes of each continent in 2007, all countries had the same relations between the extremes aside from Oceania, where the smallest populated country had a *lower* GDP per capita than that of the largest populated country (which is different from 1952).
 
 Both generally and by continent, there is no linear relationship between population and GDP per capita. This is not totally unexpected though as each point is a country, and each country has its own economy, and there are other factors not represented in the dataset that likely more directly and more greatly influenced GDP per capita.
+
+**Bonus!**
+
+After chatting with the rest of Team Zeta, people were curious about drilling into the second plot of GDP per capita and population per continent. Thought about doing that earlier but ran out of time/energy. However, I ended up circling back and figured I'd add it here.
+
+```{r q5-task4}
+gap_minder_mean_df <- gapminder %>%
+  group_by(continent, year) %>%
+  summarise(mean_gdpPercap = mean(gdpPercap), mean_pop = mean(pop))
+
+gap_minder_mean_df
+
+gap_minder_mean_df %>%
+  ggplot(mapping = aes(x = mean_pop, y = mean_gdpPercap, color = year)) +
+  geom_point() +
+  facet_wrap(~ continent, nrow = 5) +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(title = "Mean GDP per capita by mean population per continent over time")
+```
+**Observations:**
+
+When looking at the mean population and mean GDP per capita on a log-log scale, we can see a somewhat linear trend of population and GDP per capita both increasing over the years.
+
+- Europe has the smallest mean population range over time
+- Africa has the largest mean population range over time
+- Slope of the Europe datapoints is the sharpest across the five continents

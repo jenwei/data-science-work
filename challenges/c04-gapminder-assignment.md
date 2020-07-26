@@ -59,14 +59,14 @@ for more information.
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ───────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
     ## ✓ tibble  3.0.1     ✓ dplyr   1.0.0
     ## ✓ tidyr   1.1.0     ✓ stringr 1.4.0
     ## ✓ readr   1.3.1     ✓ forcats 0.5.0
 
-    ## ── Conflicts ──────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -364,7 +364,7 @@ gapminder %>%
   facet_wrap(~ continent, nrow = 5) +
   scale_x_log10() +
   scale_y_log10() +
-  labs(title = "GDP per capita by population per continent")
+  labs(title = "GDP per capita by population per continent over time")
 ```
 
 ![](c04-gapminder-assignment_files/figure-gfm/q5-task1-1.png)<!-- -->
@@ -460,7 +460,7 @@ year_extremes_df %>%
   facet_grid(~ year ~ .) +
   scale_x_log10() +
   scale_y_log10() +
-  labs(title = "GDP per capita by population per continent for the year-extremes")
+  labs(title = "GDP per capita by population per continent for 1952 and 2007 (with first and last population counts annotated)")
 ```
 
 ![](c04-gapminder-assignment_files/figure-gfm/q5-task3-1.png)<!-- -->
@@ -494,3 +494,60 @@ population and GDP per capita. This is not totally unexpected though as
 each point is a country, and each country has its own economy, and there
 are other factors not represented in the dataset that likely more
 directly and more greatly influenced GDP per capita.
+
+**Bonus\!**
+
+After chatting with the rest of Team Zeta, people were curious about
+drilling into the second plot of GDP per capita and population per
+continent. Thought about doing that earlier but ran out of time/energy.
+However, I ended up circling back and figured I’d add it here.
+
+``` r
+gap_minder_mean_df <- gapminder %>%
+  group_by(continent, year) %>%
+  summarise(mean_gdpPercap = mean(gdpPercap), mean_pop = mean(pop))
+```
+
+    ## `summarise()` regrouping output by 'continent' (override with `.groups` argument)
+
+``` r
+gap_minder_mean_df
+```
+
+    ## # A tibble: 60 x 4
+    ## # Groups:   continent [5]
+    ##    continent  year mean_gdpPercap  mean_pop
+    ##    <fct>     <int>          <dbl>     <dbl>
+    ##  1 Africa     1952          1253.  4570010.
+    ##  2 Africa     1957          1385.  5093033.
+    ##  3 Africa     1962          1598.  5702247.
+    ##  4 Africa     1967          2050.  6447875.
+    ##  5 Africa     1972          2340.  7305376.
+    ##  6 Africa     1977          2586.  8328097.
+    ##  7 Africa     1982          2482.  9602857.
+    ##  8 Africa     1987          2283. 11054502.
+    ##  9 Africa     1992          2282. 12674645.
+    ## 10 Africa     1997          2379. 14304480.
+    ## # … with 50 more rows
+
+``` r
+gap_minder_mean_df %>%
+  ggplot(mapping = aes(x = mean_pop, y = mean_gdpPercap, color = year)) +
+  geom_point() +
+  facet_wrap(~ continent, nrow = 5) +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(title = "Mean GDP per capita by mean population per continent over time")
+```
+
+![](c04-gapminder-assignment_files/figure-gfm/q5-task4-1.png)<!-- -->
+**Observations:**
+
+When looking at the mean population and mean GDP per capita on a log-log
+scale, we can see a somewhat linear trend of population and GDP per
+capita both increasing over the years.
+
+  - Europe has the smallest mean population range over time
+  - Africa has the largest mean population range over time
+  - Slope of the Europe datapoints is the sharpest across the five
+    continents
