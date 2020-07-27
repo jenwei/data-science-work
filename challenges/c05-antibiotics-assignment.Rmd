@@ -1,7 +1,7 @@
 ---
 title: "Antibiotics"
-author: "(Your name here)"
-date: 2020-
+author: "Jen Wei"
+date: 2020-07-26
 output:
   github_document:
     toc: true
@@ -71,14 +71,106 @@ df_antibiotics %>% knitr::kable()
 
 __q1__ Create a visualization of `df_antibiotics` that helps you to compare the effectiveness of the three antibiotics across all the bacteria reported. Can you make any broad statements about antibiotic effectiveness?
 
-```{r q1-task}
-## TASK: Create your visualization
+```{r q1-task-plot-1}
+df_antibiotics %>%
+  ggplot() +
+  geom_boxplot(mapping = aes(x = "penicillin", y = penicillin)) +
+  geom_boxplot(mapping = aes(x = "streptomycin", y = streptomycin)) +
+  geom_boxplot(mapping = aes(x = "neomycin", y = neomycin)) +
+  labs(title = "MIC distribution across all bacteria (per antibiotic)", y = "MIC", x = "antibiotics")
 ```
 
 **Observations**:
 
-- Record your observations here
-- Can you make any broad statements about antibiotic effectiveness?
+- When looking at MIC across all bacteria . . .
+  - all three antibiotics have outliers, but penicillin has the "worst" ones that are almost 100x the highest MIC for the other two antibiotics
+  - penicillin has the widest spread of MIC values
+
+```{r q1-task-plot-2}
+df_antibiotics %>%
+  ggplot() +
+  geom_boxplot(mapping = aes(x = "penicillin", y = penicillin)) +
+  geom_boxplot(mapping = aes(x = "streptomycin", y = streptomycin)) +
+  geom_boxplot(mapping = aes(x = "neomycin", y = neomycin)) +
+  labs(title = "MIC distribution across all bacteria when MIC is at most 0.1", y = "MIC", x = "antibiotics") +
+  coord_cartesian(ylim = c(0, 0.1))
+```
+
+**Observations**:
+
+Because the spread of is so wide, I tried to zoom into MIC values with an upper bound of 0.1, the maximum MIC value "considered necessary for treating human patients".
+
+Disclaimer: Not quite sure what this means, but it was in the background, and my interpretation of it was that MIC values up to 0.1 were effective against bacteria, and anything above wasn't (or not within what's been deemed "safe" for humans)
+
+- When looking at MIC across all bacteria . . .
+  - neomycin is the only antibiotic with its median (0.100) within the set bound
+
+```{r q1-task-plot-3}
+df_antibiotics %>%
+  ggplot() +
+  geom_boxplot(mapping = aes(x = "penicillin", y = penicillin)) +
+  geom_boxplot(mapping = aes(x = "streptomycin", y = streptomycin)) +
+  geom_boxplot(mapping = aes(x = "neomycin", y = neomycin)) +
+  labs(title = "MIC distribution across all bacteria (per antibiotic) on a log scale", y = "MIC", x = "antibiotics") +
+  scale_y_log10()
+```
+
+**Observations**:
+
+- When looking at MIC across all bacteria on a log10 scale . . .
+  - only streptomycin has an outlier
+  - neomycin has the lowest median MIC
+  - penicillin has the widest spread of MIC values
+
+```{r q1-task-plot-4}
+df_antibiotics_long <- df_antibiotics %>%
+  pivot_longer(
+    cols = starts_with("pen") | starts_with("strep") | starts_with ("neo"),
+    names_to = "antibiotic",
+    values_to = "MIC"
+  )
+
+df_antibiotics_long
+
+max_MIC <- 0.1
+
+df_antibiotics_long %>%
+  ggplot() +
+  geom_point(mapping = aes(y = MIC, x = antibiotic, color = bacteria)) +
+  labs(title = "MIC distribution across all bacteria (per antibiotic) on a log scale", y = "MIC", x = "antibiotics") +
+  geom_hline(yintercept = max_MIC) +
+  geom_text(aes(0, max_MIC, label = max_MIC, vjust = -1, hjust = -1)) +
+  scale_y_log10()
+
+# penicillin-affected bacteria
+df_antibiotics_long %>%
+  filter(MIC <= max_MIC, antibiotic == 'penicillin') %>%
+  group_by(antibiotic) %>%
+  summary()
+
+# neomycin-affected bacteria
+df_antibiotics_long %>%
+  filter(MIC <= max_MIC, antibiotic == 'neomycin') %>%
+  group_by(antibiotic) %>%
+  summary()
+
+# streptomycin-affected bacteria
+df_antibiotics_long %>%
+  filter(MIC <= max_MIC, antibiotic == 'streptomycin') %>%
+  group_by(antibiotic) %>%
+  summary()
+```
+
+**Observations:**
+
+- Less than half (19) of MIC values (48) are less than or equal to 0.1
+- penicillin is effective against 6 bacteria
+- neomycin is effective against 9 bacteria
+- streptomycin is effective against 4 bacteria
+
+**Broad statement(s) about antibiotic effectiveness:**
+
+- No antibiotic is 100% effective against all bacteria
 
 ## Purpose: Categorize Bacteria
 <!-- ------------------------- -->
