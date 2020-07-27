@@ -417,8 +417,8 @@ df_antibiotics %>%
 
 ## Code Parking Lot
 
-This section is where I save code that might be useful for reference but
-was not necessary for the challenge
+This section is for code that might be useful for future reference but
+is not needed/used for the challenge
 
 ``` r
 # df_antibiotics_long <- df_antibiotics_long %>%
