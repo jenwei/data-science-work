@@ -10,6 +10,7 @@ Jen Wei
   - [Visualization](#visualization)
       - [Purpose: Compare Effectiveness](#purpose-compare-effectiveness)
       - [Purpose: Categorize Bacteria](#purpose-categorize-bacteria)
+      - [Code Parking Lot](#code-parking-lot)
   - [References](#references)
 
 *Purpose*: To create an effective visualization, we need to keep our
@@ -189,8 +190,10 @@ Because the spread of is so wide, I tried to zoom into MIC values with
 an upper bound of 0.1, the maximum MIC value “considered necessary for
 treating human patients”.
 
-(Disclaimer: Not quite sure what this means, but it was in the
-background)
+Disclaimer: Not quite sure what this means, but it was in the
+background, and my interpretation of it was that MIC values up to 0.1
+were effective against bacteria, and anything above wasn’t (or not
+within what’s been deemed “safe” for humans)
 
   - When looking at MIC across all bacteria . . .
       - neomycin is the only antibiotic with its median (0.100) within
@@ -223,7 +226,7 @@ df_antibiotics %>%
 df_antibiotics_long <- df_antibiotics %>%
   pivot_longer(
     cols = starts_with("pen") | starts_with("strep") | starts_with ("neo"),
-    names_to = "antibiotics",
+    names_to = "antibiotic",
     values_to = "MIC"
   )
 
@@ -231,7 +234,7 @@ df_antibiotics_long
 ```
 
     ## # A tibble: 48 x 4
-    ##    bacteria              gram     antibiotics      MIC
+    ##    bacteria              gram     antibiotic       MIC
     ##    <chr>                 <chr>    <chr>          <dbl>
     ##  1 Aerobacter aerogenes  negative penicillin   870    
     ##  2 Aerobacter aerogenes  negative streptomycin   1    
@@ -250,7 +253,7 @@ max_MIC <- 0.1
 
 df_antibiotics_long %>%
   ggplot() +
-  geom_point(mapping = aes(y = MIC, x = antibiotics, color = bacteria)) +
+  geom_point(mapping = aes(y = MIC, x = antibiotic, color = bacteria)) +
   labs(title = "MIC distribution across all bacteria (per antibiotic) on a log scale", y = "MIC", x = "antibiotics") +
   geom_hline(yintercept = max_MIC) +
   geom_text(aes(0, max_MIC, label = max_MIC, vjust = -1, hjust = -1)) +
@@ -260,27 +263,64 @@ df_antibiotics_long %>%
 ![](c05-antibiotics-assignment_files/figure-gfm/q1-task-plot-4-1.png)<!-- -->
 
 ``` r
+# penicillin-affected bacteria
 df_antibiotics_long %>%
-  filter(MIC <= max_MIC) %>%
-  glimpse()
+  filter(MIC <= max_MIC, antibiotic == 'penicillin') %>%
+  group_by(antibiotic) %>%
+  summary()
 ```
 
-    ## Rows: 19
-    ## Columns: 4
-    ## $ bacteria    <chr> "Brucella abortus", "Bacillus anthracis", "Bacillus anthr…
-    ## $ gram        <chr> "negative", "positive", "positive", "positive", "positive…
-    ## $ antibiotics <chr> "neomycin", "penicillin", "streptomycin", "neomycin", "pe…
-    ## $ MIC         <dbl> 0.020, 0.001, 0.010, 0.007, 0.005, 0.100, 0.100, 0.100, 0…
+    ##    bacteria             gram            antibiotic             MIC          
+    ##  Length:6           Length:6           Length:6           Min.   :0.001000  
+    ##  Class :character   Class :character   Class :character   1st Qu.:0.002000  
+    ##  Mode  :character   Mode  :character   Mode  :character   Median :0.005000  
+    ##                                                           Mean   :0.008167  
+    ##                                                           3rd Qu.:0.006500  
+    ##                                                           Max.   :0.030000
+
+``` r
+# neomycin-affected bacteria
+df_antibiotics_long %>%
+  filter(MIC <= max_MIC, antibiotic == 'neomycin') %>%
+  group_by(antibiotic) %>%
+  summary()
+```
+
+    ##    bacteria             gram            antibiotic             MIC         
+    ##  Length:9           Length:9           Length:9           Min.   :0.00100  
+    ##  Class :character   Class :character   Class :character   1st Qu.:0.00700  
+    ##  Mode  :character   Mode  :character   Mode  :character   Median :0.02000  
+    ##                                                           Mean   :0.04744  
+    ##                                                           3rd Qu.:0.10000  
+    ##                                                           Max.   :0.10000
+
+``` r
+# streptomycin-affected bacteria
+df_antibiotics_long %>%
+  filter(MIC <= max_MIC, antibiotic == 'streptomycin') %>%
+  group_by(antibiotic) %>%
+  summary()
+```
+
+    ##    bacteria             gram            antibiotic             MIC       
+    ##  Length:4           Length:4           Length:4           Min.   :0.010  
+    ##  Class :character   Class :character   Class :character   1st Qu.:0.025  
+    ##  Mode  :character   Mode  :character   Mode  :character   Median :0.065  
+    ##                                                           Mean   :0.060  
+    ##                                                           3rd Qu.:0.100  
+    ##                                                           Max.   :0.100
 
 **Observations:**
 
   - Less than half (19) of MIC values (48) are less than or equal to 0.1
+  - penicillin is effective against 6 bacteria
+  - neomycin is effective against 9 bacteria
+  - streptomycin is effective against 4 bacteria
 
-**Broad statements about antibiotic effectiveness:**
+**Broad statement(s) about antibiotic effectiveness:**
 
   - No antibiotic is 100% effective against all bacteria
 
-  - 
 ## Purpose: Categorize Bacteria
 
 <!-- ------------------------- -->
@@ -298,12 +338,115 @@ your observations on how how clusters of bacteria in the variables do—or
 don’t—align with their *genus* classification.
 
 ``` r
-## TASK: Create your visualization
+df_antibiotics %>%
+  ggplot(mapping = aes(x = penicillin, y = neomycin, color = bacteria)) +
+  geom_point() +
+  geom_label_repel(
+    aes(label = bacteria),
+    size = 2,
+    segment.color = NA
+  ) +
+  labs(title = "neomycin vs penicillin MICs on a log scale") +
+  geom_hline(yintercept = max_MIC) +
+  scale_x_log10() +
+  scale_y_log10()
 ```
+
+![](c05-antibiotics-assignment_files/figure-gfm/q2-task-plot-1-1.png)<!-- -->
 
 **Observations**:
 
-  - Document your observations here\!
+  - When comparing neomycin MIC and penicillin MIC . . .
+      - the `Staphylococcus` genus seems to cluster
+      - other genuses (i.e. `Streptococcus` and `Salmonella`) don’t seem
+        to cluster though two of the three `Streptococcus` ones do
+        (`Streptococcus fecalis` being the outlier)
+
+<!-- end list -->
+
+``` r
+df_antibiotics %>%
+  ggplot(mapping = aes(x = streptomycin, y = neomycin, color = bacteria)) +
+  geom_point() +
+  geom_label_repel(
+    aes(label = bacteria),
+    size = 2,
+    segment.color = NA
+  ) +
+  labs(title = "neomycin vs streptomycin MICs on a log scale") +
+  geom_hline(yintercept = max_MIC) +
+  scale_x_log10() +
+  scale_y_log10()
+```
+
+![](c05-antibiotics-assignment_files/figure-gfm/q2-task-plot-2-1.png)<!-- -->
+
+**Observations:**
+
+  - When comparing neomycin MIC and streptomycin MIC . . .
+      - the `Staphylococcus` genus seems to cluster
+      - other genuses (i.e. `Streptococcus` and `Salmonella`) don’t seem
+        to cluster though two of the three `Streptococcus` ones do
+        (`Streptococcus fecalis` being the outlier)
+
+<!-- end list -->
+
+``` r
+df_antibiotics %>%
+  ggplot(mapping = aes(x = streptomycin, y = penicillin, color = bacteria)) +
+  geom_point() +
+  geom_label_repel(
+    aes(label = bacteria),
+    size = 2,
+    segment.color = NA
+  ) +
+  labs(title = "penicillin vs streptomycin MICs on a log scale") +
+  geom_hline(yintercept = max_MIC) +
+  scale_x_log10() +
+  scale_y_log10()
+```
+
+![](c05-antibiotics-assignment_files/figure-gfm/q2-task-plot-3-1.png)<!-- -->
+
+**Observations:**
+
+  - When comparing penicillin MIC and streptomycin MIC . . .
+      - the `Staphylococcus` genus seems to cluster
+      - other genuses (i.e. `Streptococcus` and `Salmonella`) don’t seem
+        to cluster
+
+## Code Parking Lot
+
+This section is where I save code that might be useful for reference but
+was not necessary for the challenge
+
+``` r
+# df_antibiotics_long <- df_antibiotics_long %>%
+#  mutate(isEffective = MIC <= 0.1)
+
+# df_antiobiotics_effective_annotated <- df_antibiotics_long %>%
+#   filter(isEffective == TRUE)
+
+# df_antiobiotics_effective_annotated
+
+# df_antiobiotics_not_effective <- df_antibiotics_long %>%
+#  filter(isEffective == FALSE)
+
+# df_antiobiotics_not_effective
+
+# df_antibiotics_long %>%
+#  ggplot(mapping = aes(y = MIC, x = antibiotic, color = bacteria)) +
+#  geom_point() +
+#  geom_label_repel(
+#    data = df_antiobiotics_effective_annotated,
+#    aes(label = bacteria)
+#  ) +
+#  labs(title = "MIC distribution across all bacteria (per antibiotic) on a log scale", y = "MIC", x = "antibiotics") +
+#  facet_grid(~ gram ~ isEffective, switch = "y", labeller = label_both) +
+#  geom_hline(yintercept = max_MIC) +
+#  geom_text(aes(0, max_MIC, label = max_MIC, vjust = -1, hjust = -1, size = 10)) +
+#  scale_y_log10()
+```
 
 # References
 

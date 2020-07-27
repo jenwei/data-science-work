@@ -46,7 +46,6 @@ All the deliverables stated in the rubrics above are due on the day of the class
 ```{r setup}
 library(tidyverse)
 library(ggrepel)
-
 ```
 
 *Background*: The data[1] we study in this challenge report the [*minimum inhibitory concentration*](https://en.wikipedia.org/wiki/Minimum_inhibitory_concentration) (MIC) of three drugs for different bacteria. The smaller the MIC for a given drug and bacteria pair, the more practical the drug is for treating that particular bacteria. An MIC value of *at most* 0.1 is considered necessary for treating human patients.
@@ -179,13 +178,101 @@ The *genus* of a living organism is a human categorization, based on various cha
 
 __q2__ Create a visualization of `df_antibiotics` that helps you to categorize bacteria according to the variables in the data. Document your observations on how how clusters of bacteria in the variables do---or don't---align with their *genus* classification.
 
-```{r q2-task}
-## TASK: Create your visualization
+```{r q2-task-plot-1}
+df_antibiotics %>%
+  ggplot(mapping = aes(x = penicillin, y = neomycin, color = bacteria)) +
+  geom_point() +
+  geom_label_repel(
+    aes(label = bacteria),
+    size = 2,
+    segment.color = NA
+  ) +
+  labs(title = "neomycin vs penicillin MICs on a log scale") +
+  geom_hline(yintercept = max_MIC) +
+  scale_x_log10() +
+  scale_y_log10()
 ```
 
 **Observations**:
 
-- Document your observations here!
+- When comparing neomycin MIC and penicillin MIC . . .
+  - the `Staphylococcus` genus seems to cluster
+  - other genuses (i.e. `Streptococcus` and `Salmonella`) don't seem to cluster though two of the three `Streptococcus` ones do (`Streptococcus fecalis` being the outlier)
+
+```{r q2-task-plot-2}
+df_antibiotics %>%
+  ggplot(mapping = aes(x = streptomycin, y = neomycin, color = bacteria)) +
+  geom_point() +
+  geom_label_repel(
+    aes(label = bacteria),
+    size = 2,
+    segment.color = NA
+  ) +
+  labs(title = "neomycin vs streptomycin MICs on a log scale") +
+  geom_hline(yintercept = max_MIC) +
+  scale_x_log10() +
+  scale_y_log10()
+```
+
+**Observations:**
+
+- When comparing neomycin MIC and streptomycin MIC . . .
+  - the `Staphylococcus` genus seems to cluster
+  - other genuses (i.e. `Streptococcus` and `Salmonella`) don't seem to cluster though two of the three `Streptococcus` ones do (`Streptococcus fecalis` being the outlier)
+
+```{r q2-task-plot-3}
+df_antibiotics %>%
+  ggplot(mapping = aes(x = streptomycin, y = penicillin, color = bacteria)) +
+  geom_point() +
+  geom_label_repel(
+    aes(label = bacteria),
+    size = 2,
+    segment.color = NA
+  ) +
+  labs(title = "penicillin vs streptomycin MICs on a log scale") +
+  geom_hline(yintercept = max_MIC) +
+  scale_x_log10() +
+  scale_y_log10()
+```
+
+**Observations:**
+
+- When comparing penicillin MIC and streptomycin MIC . . .
+  - the `Staphylococcus` genus seems to cluster
+  - other genuses (i.e. `Streptococcus` and `Salmonella`) don't seem to cluster
+
+## Code Parking Lot
+
+This section is for code that might be useful for future reference but is not needed/used for the challenge
+
+```{r unused}
+
+# df_antibiotics_long <- df_antibiotics_long %>%
+#  mutate(isEffective = MIC <= 0.1)
+
+# df_antiobiotics_effective_annotated <- df_antibiotics_long %>%
+#   filter(isEffective == TRUE)
+
+# df_antiobiotics_effective_annotated
+
+# df_antiobiotics_not_effective <- df_antibiotics_long %>%
+#  filter(isEffective == FALSE)
+
+# df_antiobiotics_not_effective
+
+# df_antibiotics_long %>%
+#  ggplot(mapping = aes(y = MIC, x = antibiotic, color = bacteria)) +
+#  geom_point() +
+#  geom_label_repel(
+#    data = df_antiobiotics_effective_annotated,
+#    aes(label = bacteria)
+#  ) +
+#  labs(title = "MIC distribution across all bacteria (per antibiotic) on a log scale", y = "MIC", x = "antibiotics") +
+#  facet_grid(~ gram ~ isEffective, switch = "y", labeller = label_both) +
+#  geom_hline(yintercept = max_MIC) +
+#  geom_text(aes(0, max_MIC, label = max_MIC, vjust = -1, hjust = -1, size = 10)) +
+#  scale_y_log10()
+```
 
 # References
 <!-- -------------------------------------------------- -->
