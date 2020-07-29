@@ -178,7 +178,7 @@ df_antibiotics %>%
   geom_boxplot(mapping = aes(x = "penicillin", y = penicillin)) +
   geom_boxplot(mapping = aes(x = "streptomycin", y = streptomycin)) +
   geom_boxplot(mapping = aes(x = "neomycin", y = neomycin)) +
-  labs(title = "MIC distribution across all bacteria when MIC is at most 0.1", y = "MIC", x = "antibiotics") +
+  labs(title = "MIC distribution across all bacteria (per antibiotic) when MIC is at most 0.1", y = "MIC", x = "antibiotics") +
   coord_cartesian(ylim = c(0, 0.1))
 ```
 
