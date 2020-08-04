@@ -1,0 +1,52 @@
+---
+title: "Food Consumption and CO2 Emissions"
+author: "Jen Wei"
+date: '2020-08-03'
+output:
+  github_document:
+    toc: yes
+  html_notebook:
+    toc: yes
+---
+
+*Purpose*: <TODO>
+
+```{r setup}
+library(tidyverse)
+library(gapminder)
+```
+
+*Background*: <TODO>
+
+# Get the Data
+<!-- -------------------------------------------------- -->
+
+```{r final-project-get-data}
+
+df_food_consumption <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-02-18/food_consumption.csv')
+
+glimpse(df_food_consumption)
+
+summary(df_food_consumption)
+```
+
+# Analyze
+<!-- -------------------------------------------------- -->
+
+```{r EDA-plot-1}
+df_food_consumption %>%
+  ggplot() +
+  geom_point(mapping = aes(x = consumption, y = co2_emmission, color = food_category))
+```
+
+
+```{r analysis-plot-1}
+# TODO
+
+```
+
+
+# Notes / Sources
+<!-- -------------------------------------------------- -->
+
+[1] <TODO>
