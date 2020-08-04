@@ -85,8 +85,6 @@ filename <- "./data/covid-five-year.csv"
 
 # Load the data
 df_pop <- read_csv(filename, skip = 1)
-
-df_pop
 ```
 
 *Note*: You can find information on 1-year, 3-year, and 5-year estimates [here](https://www.census.gov/programs-surveys/acs/guidance/estimates.html). The punchline is that 5-year estimates are more reliable but less current.
@@ -144,8 +142,6 @@ __q3__ Process the `id` column of `df_pop` to create a `fips` column.
 ```{r q3-task}
 ## TASK: Create a `fips` column by extracting the county code
 df_q3 <- df_pop %>% mutate(fips = str_sub(id, -5))
-
-df_q3
 ```
 
 Use the following test to check your answer.
@@ -168,8 +164,6 @@ __q4__ Join `df_covid` with `df_q3` by the `fips` column. Use the proper type of
 ```{r q4-task}
 ## TASK: Join df_covid and df_q3 by fips.
 df_q4 <- merge(df_covid, df_q3, by = "fips")
-
-df_q4
 ```
 
 For convenience, I down-select some columns and produce more convenient column
@@ -202,16 +196,13 @@ __q5__ Use the `population` estimates in `df_data` to normalize `cases` and `dea
 
 ```{r q5-task}
 ## TASK: Normalize cases and deaths
-df_data
-
 df_normalized <-
   df_data %>%
-  mutate(cases_perk = cases / population * 100000, deaths_perk = deaths / population * 100000)
+  mutate(cases_perk = cases / population * 100000, deaths_perk = deaths / population * 100000) %>%
+  unite(col = "location", county, state, sep = ", ", remove = FALSE)
 ```
 
 You may use the following test to check your work.
-
-# TODO: [2020-07-26] Figure out why the assertions are failing!
 ```{r q5-tests}
 ## NOTE: No need to change this
 ## Check known county data
@@ -324,6 +315,260 @@ df_normalized %>%
     x = "Date",
     y = "Cases (per 100,000 persons)"
   )
+```
+
+#### My Plots
+
+First, I wanted to zoom into San Francisco data.
+
+```{r q8-plot-1}
+df_sf_normalized <- df_normalized %>%
+  filter(state == "California", county == "San Francisco")
+
+df_sf_normalized %>%
+  ggplot(
+    aes(date, cases_perk)
+  ) +
+  geom_line(aes(color = "Cases")) +
+  scale_x_date(date_breaks = "1 week") +
+  scale_y_log10(labels = scales::label_number_si()) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(
+    x = "Date",
+    y = "Cases (per 100,000 persons)",
+    title = "San Francisco, CA cases and deaths per 100,000 persons over time (log scale)",
+    color = "Legend"
+  ) +
+  geom_line(mapping = aes(date, deaths_perk, color = "Deaths"))
+```
+
+**Observations:**
+
+- The trend plot seems to have a three week offset from the cases
+- The trend for deaths seems to roughly match the trend for cases though at a smaller scale
+  - Used a log scale for the y (despite some hesitance) because the number of deaths was still under 10 while the number of cases had grown to almost 1,000
+  - Seems to suggest that there is some sort of correlation between number of cases and number of deaths though the exact relation isn't obvious from this plot alone as there are a number of factors impacting the stats like time delay between when tests were taken and when their results came in and the prevalence of test facilities
+
+After, I decided to focus on just cases and see if there were any noticeable correlations between the cases and the major steps taken by San Francisco. The major steps are from [the SF reopening timeline](https://sf.gov/step-by-step/reopening-san-francisco).
+
+```{r q8-plot-2}
+# Similar to plot-1 but minus deaths and with annotated dates
+df_sf_normalized %>%
+  ggplot(
+    aes(date, cases_perk)
+  ) +
+  geom_line() +
+  scale_x_date(date_breaks = "2 week") +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(
+    x = "Date",
+    y = "Cases (per 100,000 persons)",
+    title = "San Francisco, CA cases per 100,000 persons over time"
+  ) +
+  geom_vline(xintercept = as.Date('2020-03-17'), linetype = "dotted", color = "black") +
+  annotate("rect", xmin = as.Date('2020-03-17'), xmax = as.Date('2020-04-01'), ymin = 0, ymax = 1000, alpha = .2) +
+  geom_text(
+    mapping = aes(x = as.Date('2020-03-17'), y = 800, label = "Shelter-in-place"),
+    angle = 90,
+    vjust = 1.2,
+    color = "black") +
+  geom_vline(xintercept = as.Date('2020-05-17'), linetype = "dotted", color = "black") +
+  annotate("rect", xmin = as.Date('2020-05-17'), xmax = as.Date('2020-05-31'), ymin = 0, ymax = 1000, alpha = .2) +
+  geom_text(
+    mapping = aes(x = as.Date('2020-05-17'), y = 800, label = "Limited openings"),
+    angle = 90,
+    vjust = 1.2,
+    color = "black") +
+  geom_vline(xintercept = as.Date('2020-06-01'), linetype = "dotted", color = "black") +
+  annotate("rect", xmin = as.Date('2020-06-01'), xmax = as.Date('2020-06-15'), ymin = 0, ymax = 1000, alpha = .2) +
+  geom_text(
+    mapping = aes(x = as.Date('2020-06-01'), y = 800, label = "Small activities"),
+    angle = 90,
+    vjust = 1.2,
+    color = "black") +
+  geom_vline(xintercept = as.Date('2020-06-12'), linetype = "dotted", color = "black") +
+  annotate("rect", xmin = as.Date('2020-06-12'), xmax = as.Date('2020-06-26'), ymin = 0, ymax = 1000, alpha = .2) +
+  geom_text(
+    mapping = aes(x = as.Date('2020-06-12'), y = 500, label = "Outdoor dining"),
+    angle = 90,
+    vjust = 1.2,
+    color = "black") +
+  geom_vline(xintercept = as.Date('2020-06-15'), linetype = "dotted", color = "black") +
+  annotate("rect", xmin = as.Date('2020-06-15'), xmax = as.Date('2020-06-29'), ymin = 0, ymax = 1000, alpha = .2) +
+  geom_text(
+    mapping = aes(x = as.Date('2020-06-15'), y = 100, label = "Phase 2b"),
+    angle = 90,
+    vjust = 1.2,
+    color = "black")
+```
+
+**Observations:**
+
+- After shelter-in-place took effect, the number of cases continued to increase
+- For each event, a two-week window after was included to factor in the incubation period of COVID
+  - Even two weeks after shelter-in-place took effect, the number of cases did not noticeably decrease (as I would have expected)
+    - This suggests that though shelter-in-place could have had an impact, it was not drastic enough to notice in the plot
+- The slope seems relatively steady even with "Limited opening" and "Small activities" allowed
+- Around the ends of the "Outdoor dining" and "Phase 2b" windows, the slope of cases seems to sharpen - not to say that those two events caused an increase in cases, but there seems to be _some_ correlation between the two
+
+After seeing (or not seeing) the impact of San Francisco events on cases, I was curious about how San Francisco compared to other Bay Area counties like San Mateo (Peninsula) and Santa Clara (South Bay).
+
+``` {r q8-plot-3}
+df_bay_normalized <- df_normalized %>%
+  filter(state == "California") %>%
+  filter(county == "San Francisco" | county == "Santa Clara" | county == "San Mateo")
+
+df_bay_normalized %>%
+  ggplot(
+    aes(date, cases_perk, color = fct_reorder2(county, date, cases_perk))
+  ) +
+  geom_line() +
+  scale_color_discrete(name = "County") +
+  theme_minimal() +
+  labs(
+    x = "Date",
+    y = "Cases (per 100,000 persons)"
+  )
+```
+
+**Observations:**
+
+- San Francisco and San Mateo seem to be showing similar trends and similar number of cases per 100,000 persons
+  - Slight divergence between mid-April and mid-June
+- Santa Clara showed similar trends as San Francisco and San Mateo leading up to mid-April but experienced a slower growth in number of cases between mid-April and late-June
+  - Slope of cases per 100,000 persons looks about parallel to that of San Francisco and San Mateo starting in July
+
+### Plots for Zeta Presentation
+
+Code below is from Zeta where we shared code amongst team members and made modifications to make presentation-styled plots
+
+```{r q8-final counties from Ingrid}
+#So that everyone can run this code snippet
+df_q8 <- df_normalized
+
+#Counties of interest
+final_counties <- c(27053, 27019, 37183, 37063, 22071, 22103)
+
+#Running Total and Ratio calculations
+df_final_counties <- df_q8 %>% 
+  filter(fips == final_counties) %>%
+  group_by(fips) %>% 
+  mutate(deathratio_perk = deaths_perk/cases_perk) %>%
+  ungroup() %>%
+  group_by(state) %>%
+  mutate(state_max_cases_perk = max(cases_perk))
+
+# Cases 
+cases <- df_final_counties %>% 
+  ggplot(
+    aes(date, cases_perk, 
+      color = fct_reorder2(location, state, state_max_cases_perk), 
+      linetype = fct_reorder(state, desc(state_max_cases_perk))
+    )
+  ) +
+  geom_line() +
+  scale_color_discrete(name = "County") +
+  scale_linetype_discrete(name = "State") +
+  theme_minimal() +
+  labs(
+    title = "COVID-19 cases per 100,000 persons in select US counties",
+    x = "Date",
+    y = "Cases per 100,000 persons"
+  ) +
+  geom_vline(xintercept = as.Date('2020-04-12'), linetype = "solid", color = "red") +
+  geom_vline(xintercept = as.Date('2020-04-26'), linetype = "dashed", color = "red") +
+  annotate("rect", xmin = as.Date('2020-04-12'), xmax = as.Date('2020-04-26'), ymin = 0, ymax = 3000,
+  alpha = .2) +
+  geom_text(
+    mapping = aes(x = as.Date('2020-04-12'), y = 1000, label = "Easter Sunday"),
+    angle = 90,
+    vjust = 1.2,
+    color = "red",
+    text = element_text(size = 10)) +
+  geom_vline(xintercept = as.Date('2020-05-25'), linetype = "solid", color = "red") +
+  geom_vline(xintercept = as.Date('2020-06-08'), linetype = "dashed", color = "red") +
+  annotate("rect", xmin = as.Date('2020-05-25'), xmax = as.Date('2020-06-08'), ymin = 0, ymax = 3000,
+  alpha = .2) +
+  geom_text(
+    mapping = aes(x = as.Date('2020-05-25'), y = 1000, label = "Memorial Day"),
+    angle = 90,
+    vjust = 1.2,
+    color = "red",
+    text = element_text(size = 10)) +
+  geom_vline(xintercept = as.Date('2020-07-04'), linetype = "solid", color = "red") +
+  geom_vline(xintercept = as.Date('2020-07-18'), linetype = "dashed", color = "red") +
+  annotate("rect", xmin = as.Date('2020-07-04'), xmax = as.Date('2020-07-18'), ymin = 0, ymax = 3000,
+  alpha = .2) +
+  geom_text(
+    mapping = aes(x = as.Date('2020-07-04'), y = 1000, label = "July 4th"),
+    angle = 90,
+    vjust = 1.2,
+    color = "red",
+    text = element_text(size = 10))
+
+# Deaths
+deaths <- df_final_counties %>% 
+  ggplot(
+    aes(date, deaths_perk, 
+      color = fct_reorder2(location, state, state_max_cases_perk), 
+      linetype = fct_reorder(state, desc(state_max_cases_perk))
+    )
+  ) +
+  geom_line() +
+  scale_color_discrete(name = "County") +
+  scale_linetype_discrete(name = "State") +
+  theme_minimal() +
+  labs(
+    title = "COVID-19 deaths per 100,000 persons in select US counties",
+    x = "Date",
+    y = "Deaths per 100,000 persons"
+  )
+
+# Death Ratio
+death_ratio <- df_final_counties %>%
+  ggplot(
+    aes(date, deathratio_perk, 
+      color = fct_reorder2(location, state, state_max_cases_perk), 
+      linetype = fct_reorder(state, desc(state_max_cases_perk))
+    )
+  ) +
+  geom_line() +
+  scale_color_discrete(name = "County") +
+  scale_linetype_discrete(name = "State") +
+  theme_minimal() +
+  labs(
+    title = "COVID-19 deaths per cases in select US counties",
+    x = "Date",
+    y = "Deaths per cases of COVID-19"
+  )
+
+# final_counties_cases
+# final_counties_deaths
+# final_counties_deathratio
+```
+```{r q8-final counties from Ingrid two}
+# Cases with Stay-at-Home dates
+lineTypes <- c("Louisiana" = "solid", "North Carolina" = "dotted", "Minnesota" = "dashed")
+df_final_counties %>% 
+  ggplot(
+    aes(date, cases_perk, 
+      color = fct_reorder2(location, state, state_max_cases_perk), 
+      linetype = fct_reorder(state, desc(state_max_cases_perk))
+    )
+  ) +
+  geom_line() +
+  scale_color_discrete(name = "County") +
+  scale_linetype_discrete(name = "State") +
+  theme_minimal() +
+  labs(
+    title = "COVID-19 cases per 100,000 persons in select US counties",
+    x = "Date",
+    y = "Cases per 100,000 persons"
+  ) +
+  geom_vline(xintercept = as.Date('2020-03-23'), linetype = "solid", color = "red") +
+  geom_vline(xintercept = as.Date('2020-03-30'), linetype = "dotted", color = "red") +
+  geom_vline(xintercept = as.Date('2020-03-27'), linetype = "dashed", color = "red") +
+  annotate("text", x = as.Date('2020-05-15'), y = 2500, label = " < Stay at Home Start Dates (per state)")
 ```
 
 *Tricks*:
