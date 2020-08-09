@@ -406,14 +406,15 @@ From initial exploration, our claim is that eating more, *AND* more
 animal products, results in higher emissions, *BUT* CO<sub>2</sub>
 emissions vary depending on the specific animal products being consumed.
 *THEREFORE*, we can lower our emissions by changing our diets without
-having to eat less. To support this claim, we decided to narrow our
-dataset and scope to focus on animal product consumption and
-CO<sub>2</sub> emissions of high income countries. *Why?* Animal
-products overall result in greater CO<sub>2</sub> emissions than
-non-animal products. Also, the animal products (meat, eggs, dairy) data
-is more complete than the non-animal products data in our dataset, and
-we wanted to compared the United States, a high income country, with
-other high income countries.
+having to eat less.
+
+To support this claim, we decided to narrow our dataset and scope to
+focus on animal product consumption and CO<sub>2</sub> emissions of high
+income countries. *Why?* Animal products overall result in greater
+CO<sub>2</sub> emissions than non-animal products. Also, the animal
+products (meat, eggs, dairy) data is more complete than the non-animal
+products data in our dataset, and we wanted to compared the United
+States, a high income country, with other high income countries.
 
 ``` r
 high_income_beef <- df_food_high_income %>% 
