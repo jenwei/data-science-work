@@ -755,7 +755,7 @@ following links:
 
   - [Angela](https://github.com/asharer/data-science-work/blob/master/p01-co2-emissions-animal-products.md)
 
-  - [Ingrid](https://github.com/ingridmathilde/data-science-coursework/blob/master/challenges/c07_final_challenge.md)
+  - [Ingrid](https://github.com/ingridmathilde/data-science-coursework/blob/master/challenges/p01-food_emissions.md)
 
   - [James](https://github.com/therightnee/sds_2020/blob/master/Final%20Project/final-write-up.Rmd)
 
